@@ -1,0 +1,74 @@
+<style>
+    body {
+        background-image: url('/img/bg.jpg');
+        background-size: cover;
+        background-repeat: repeat-y;
+    }
+
+    @keyframes batrinta {
+        0% {
+            background-color:black;
+        }
+
+        25% {
+            background-color:gray;
+        }
+
+        50% {
+            background-color: white;
+        }
+
+        75% {
+            background-color:gray;
+        }
+
+        100% {
+            background-color:black;
+        }
+    }
+</style>
+
+<br><br><br>
+
+<style>
+    .opa {
+        display: flex;
+        flex-direction: column;
+
+        width: 100%;
+        height: 80vh;
+
+        justify-content: center;
+        align-items: center;
+
+        color: white;
+        font-size: 35px;
+
+        overflow: hidden;
+    }
+
+    .btn {
+        width: 300px;
+        background-color: gray;
+    }
+
+    .btn:hover {
+        background-color: lightseagreen;
+    }
+
+    .btn1 {
+        width: 300px;
+        background-color: gray;
+    }
+
+    .btn1:hover {
+        background-color: rgb(91,192,222);;
+    }
+</style>
+
+<div class="opa">
+    <h1>Seja bem-vindo ao INF22A</h1>
+
+    <a href="/agenda"><input type="button" class="btn" value="Agenda"></a>
+    <a href="/admin"><input type="button" class="btn btn1" value="Painel Administrativo"></a>
+</div>

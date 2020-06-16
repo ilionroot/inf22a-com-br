@@ -1,0 +1,16 @@
+<br><br><br>
+
+<h1>Posts</h1>
+
+<hr>
+
+{{#each posts}}
+    <div class="post">
+        <small>Prazo: {{limite}}</small>
+        <h2>{{titulo}}</h2>
+        <h3>{{materia}}</h3>
+        <p>{{conteudo}}</p>
+        <hr>
+        <a href="/posts/{{id}}"><button class="btn">Ver postagem</button></a>
+    </div><br>
+{{/each}}

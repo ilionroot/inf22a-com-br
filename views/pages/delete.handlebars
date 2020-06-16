@@ -1,0 +1,25 @@
+<style>
+    input[type=button] {
+        transition: .1s ease;   
+    }
+
+    input[type=button]:hover {
+        -moz-transform: scale(1.02);
+        -webkit-transform: scale(1.02);
+        -o-transform: scale(1.02);
+        transform: scale(1.02);
+    }
+</style>
+
+<div class="container">
+    <form method="post" class="form">
+        <h1>Tem certeza de que desejas apagar esse post?</h1><br>
+
+        <div style="display: flex;flex-direction:row">
+            <input type="submit" style="width: 100px; height: auto;" class="btn" value="Sim">
+            <a href="/admin">
+                <input type="button" value="Não" class="btn delete">
+            </a>
+        </div>
+    </form>
+</div>

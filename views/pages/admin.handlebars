@@ -1,0 +1,93 @@
+<br><br><br>
+
+<style>
+    center {
+        position: fixed;
+        bottom:10px;
+        left: 10%;
+    }
+</style>
+
+
+{{#if message}}
+    <div style="z-index:100;" class="message-success">
+        {{message}}
+    </div>
+{{/if}}<br>
+
+<div style="display:flex;flex-direction:row;">
+    <div class="divLat">
+        <ul id="nav">
+            <li id="banana"><p onclick="abrir()">Gerenciar postagens&nbsp;&nbsp;&nbsp;<img style="margin-top: -20px;" src="/img/drop.png" width="22.5px" height="15px"></p>
+                <ul>
+                    <li><a href="/admin/postar">Postar</a></li>
+                    <li><a href="/agenda">Visualizar postagens</a></li>
+                </ul>
+            </li>
+            <li><a href="/register">Registrar Administrador</a></li>
+            <li><a href="#">Contatar professores</a></li>
+        </ul><br><br><br><br><br>
+    </div>
+
+    <div class="divTop">
+        <a id="1" onclick="drop(this)">Gerenciar</a>
+        <a href="/register">Registrar</a>
+        <a href="#">Contatar</a>
+    </div>
+
+    <div class="divMid">
+        <span style="margin-bottom: 300px; display:flex; flex-direction:column; align-items:center; justify-center: center;">
+            <a href="/admin/postar">Postar</a>
+            <a href="/agenda">Visualizar postagens</a>
+        </span>
+    </div>
+
+    <div class="things">
+        <div class="list">
+            {{#each data}}
+                <a href="/admin/materia/{{this.materia}}">
+                    <div class="card">
+                        <div id="header">{{this.materia}}</div><hr>
+                        <div id="card-body">
+                        <small>Total de postagens: {{this.count}}</small>
+                        </div>
+                    </div>
+                </a>
+            {{/each}}
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var click = 0;
+    
+    function abrir() {
+        var ul = document.querySelector('#nav li ul');
+
+        if(click===0) {
+            ul.style.display = 'block';
+            click++;
+        } else {
+            ul.style.display = 'none';
+            click = 0;
+        }
+    }
+
+    var click1 = 0;
+
+    function drop(p) {
+        if(click1 === 0) {   
+            $('.divMid').css('height', '100vh');
+            $(p).css('color', 'grey');
+            $('.divMid').css('font-size', '20px');
+
+            click1++;
+        } else {
+            $('.divMid').css('height', '0');
+            $(p).css('color', 'black');
+            $('.divMid').css('font-size', '0');
+
+            click1 = 0;
+        }
+    }
+</script>

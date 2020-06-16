@@ -1,0 +1,37 @@
+<div class="container">
+    <form method="post" enctype="multipart/form-data" class="form">
+        <div class="row">
+            <label for="titulo">Título: </label>
+            <input placeholder="Título da postagem" type="text" name="titulo" required>
+            <label for="materia">Disciplina: </label>
+            <select name="materia" required>
+            <option>Selecione uma disciplina</option>
+            <option>Matemática</option>
+            <option>Design de Sistemas Web (DSW)</option>
+            <option>Química</option>
+            <option>Inglês</option>
+            <option>Empreendedorismo</option>
+            <option>História</option>
+            <option>Física</option>
+            <option>Biologia</option>
+            <option>Gramática</option>
+            <option>Redação</option>
+            <option>Literatura</option>
+            <option>Espanhol</option>
+            <option>Linguagem de Programação I</option>
+            <option>Desenvolvimento de Sistemas</option>
+            <option>Religião</option>
+            <option>Sociologia</option>
+            <option>Filosofia</option>
+            <option>Geografia</option>
+            <option>Educação Física</option>
+        </select>
+        <label>Prazo</label>
+            <input type="datetime-local" name="prazo" required>
+        </div><br>
+        <textarea placeholder="Digite o conteúdo da postagem" name="conteudo" required></textarea><br>
+        <label for="fileSender">Anexo:</label><br>
+            <input type="file" name="fileSender"><br>
+        <input type="submit" value="Enviar">
+    </form<>
+</div><br>

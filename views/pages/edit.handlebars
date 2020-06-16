@@ -1,0 +1,35 @@
+<div class="container">
+    <form method="POST" class="form">
+        <div class="row">
+            <label>Título: </label>
+            <input type="text" value="{{titulo}}" name="titulo" required>
+            <label>Disciplina: </label>
+            <select name="materia" required>
+            <option>{{materia}}</option>
+            <option>Matemática</option>
+            <option>Design de Sistemas Web (DSW)</option>
+            <option>Química</option>
+            <option>Inglês</option>
+            <option>Empreendedorismo</option>
+            <option>História</option>
+            <option>Física</option>
+            <option>Biologia</option>
+            <option>Gramática</option>
+            <option>Redação</option>
+            <option>Literatura</option>
+            <option>Espanhol</option>
+            <option>Linguagem de Programação I</option>
+            <option>Desenvolvimento de Sistemas</option>
+            <option>Religião</option>
+            <option>Sociologia</option>
+            <option>Filosofia</option>
+            <option>Geografia</option>
+            <option>Educação Física</option>
+            </select>
+        <label>Prazo</label>
+            <input type="datetime-local" value="{{limite}}" name="prazo" required>
+        </div><br>
+        <textarea name="conteudo" required>{{conteudo}}</textarea><br>
+        <input type="submit" style="background-color: rgb(91,192,222);" value="Editar">
+    </form>
+</div>

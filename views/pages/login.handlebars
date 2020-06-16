@@ -1,0 +1,30 @@
+<br><br><br>
+
+<style>
+    .login {
+        height: 300px;
+    }
+</style>
+
+{{#if message}}
+    <div class="message-success" style="background-color: rgb(217,84,79);">
+        {{message}}
+    </div>
+{{/if}}
+
+{{#if successuser}}
+    <div class="message-success" style="background-color: rgb(93,184,89);">
+        {{successuser}}
+    </div>
+{{/if}}
+
+<div class="container">
+    <form class="login" method="post">
+        <label for="email">E-mail</label><br>
+            <input placeholder="Digite seu e-mail" type="email" name="email" required><br>
+        <label for="senha">Senha</label><br>
+            <input placeholder="Digite sua senha" type="password" name="senha" required><br>
+
+        <input type="submit" value="Entrar">
+    </form>
+</div>
