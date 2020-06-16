@@ -4,6 +4,34 @@
     .login {
         height: 300px;
     }
+
+    @media screen and (max-width: 768px) {
+        .message-success {
+            margin-top: 20px;
+        }
+
+        .container {
+            margin-bottom: -110px;
+        }
+
+        {{#if message}}
+            .login {
+                height: 500px;
+                width: 80%;
+                margin-bottom: 200px;
+            }
+            
+            .container {
+                margin-bottom: -190px;
+            }
+        {{else}}
+            .login {
+                height: 500px;
+                width: 80%;
+                margin-bottom: 75px;
+            }
+        {{/if}}
+    }
 </style>
 
 {{#if message}}

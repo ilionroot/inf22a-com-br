@@ -1,21 +1,96 @@
 <br><br><br>
 
+<style>
+    @media screen and (max-width: 768px) {
+        .login {
+            margin-top: -50px;
+            width: 80%;
+        }
+
+        .container {
+            margin-bottom: -150px;
+        }
+    }
+
+    @media screen and (min-width: 768px) {
+        .message-success {
+            margin-top: 0;
+        }
+        
+        .login {
+            margin-top: -2.5px;
+        }
+
+        .container {
+            margin-bottom: -65px;
+        }
+    }
+</style>
+
 {{#if message}}
     <div class="message-success" style="background-color: rgb(239,173,77);">
         {{message}}
     </div>
+
+    <style>
+         @media screen and (max-width: 768px) {
+            .message-success {
+                margin-top: 25px;
+            }
+
+            .login {
+                margin-top: -145px;
+            }
+
+            .container {
+                margin-bottom: -235px;
+            }
+         }
+    </style>
 {{/if}}
 
 {{#if error}}
     <div class="message-success" style="background-color: rgb(217,84,79);">
         {{error}}
     </div>
+
+    <style>
+         @media screen and (max-width: 768px) {
+            .message-success {
+                margin-top: 25px;
+            }
+
+            .login {
+                margin-top: -145px;
+            }
+
+            .container {
+                margin-bottom: -235px;
+            }
+         }
+    </style>
 {{/if}}
 
 {{#if already}}
     <div class="message-success" style="background-color: rgb(239,173,77);">
         {{already}}
     </div>
+
+    <style>
+         @media screen and (max-width: 768px) {
+            .message-success {
+                margin-top: 25px;
+            }
+
+            .login {
+                margin-top: -145px;
+            }
+
+            .container {
+                margin-bottom: -235px;
+            }
+         }
+    </style>
 {{/if}}
 
 <br><br>
