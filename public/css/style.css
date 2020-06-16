@@ -182,6 +182,8 @@ body small {
 
     height: 50px;
     width: auto;
+    z-index: 2;
+    margin: 10px;
 }
 
 .list {
@@ -190,6 +192,7 @@ body small {
     height: 100vh;
 
     overflow: auto;
+    z-index: 0;
 }
 
 .list a {
@@ -448,10 +451,6 @@ body small {
     .divTop a {
         text-decoration: none;
         color: black;
-    }
-    
-    .message-success {
-        margin-top: 20px;
     }
 
     .things {

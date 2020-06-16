@@ -8,12 +8,7 @@
     }
 </style>
 
-
-{{#if message}}
-    <div style="z-index:100;" class="message-success">
-        {{message}}
-    </div>
-{{/if}}<br>
+<br>
 
 <div style="display:flex;flex-direction:row;">
     <div class="divLat">
@@ -43,6 +38,11 @@
     </div>
 
     <div class="things">
+        {{#if message}}
+            <div class="message-success">
+                {{message}}
+            </div>
+        {{/if}}
         <div class="list">
             {{#each data}}
                 <a href="/admin/materia/{{this.materia}}">
