@@ -268,6 +268,7 @@ body small {
     border-radius: 25px;
 
     padding: 25px;
+    margin-bottom: 135px;
 }
 
 .login input:not([type=submit]) {

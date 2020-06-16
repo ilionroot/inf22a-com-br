@@ -15,7 +15,7 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const bcrypt = require('bcrypt');
+const crypt = require('./crypto');
 
 const multer = require('multer');
 const storage = multer.diskStorage({
@@ -57,7 +57,9 @@ const fs = require('fs');
                 return done(null, false, { message: 'Incorrect username!' });
             }
 
-            if (await bcrypt.compare(password, user.password)) { console.log('Logou!'); return done(false,user, { message: 'Logou!' }) }
+            var senha = await crypt.crypt(password);
+
+            if (user.password === senha) { console.log('Logou!'); return done(false,user, { message: 'Logou!' }) }
             else {
                 console.log('INCORRECT PASSWORD!');
                 return done(null, false, { message: 'Incorrect PASSWORD!' });
@@ -295,7 +297,7 @@ const fs = require('fs');
         res.redirect('/admin');
     });
 
-    app.get('/register',(req, res) => {
+    app.get('/register', authenticationMiddleware, (req, res) => {
         res.render('pages/register', {
             message: req.flash('passwords'),
             error: req.flash('error'),
@@ -303,7 +305,7 @@ const fs = require('fs');
         });
     });
 
-    app.post('/register', (req, res) => {
+    app.post('/register', authenticationMiddleware, (req, res) => {
         var usuario = req.body.usuario;
         var email = req.body.email;
         var senha = req.body.senha;
@@ -316,7 +318,7 @@ const fs = require('fs');
                 }
             }).then(async result => {
                 if(!result) {
-                    var senhaBanco = await bcrypt.hash(senha, 10);
+                    var senhaBanco = await crypt.crypt(senha);
                     console.log(senhaBanco + " eu sou o Igor");
 
                     User.create({
