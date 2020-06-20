@@ -6,44 +6,60 @@
         bottom:10px;
         left: 10%;
     }
+
+    body {
+        background-color: snow;
+    }
 </style>
 
 <br>
 
 <div style="display:flex;flex-direction:row;">
-    <div class="divLat">
-        <ul id="nav">
-            <li id="banana"><p onclick="abrir()">Gerenciar postagens&nbsp;&nbsp;&nbsp;<img style="margin-top: -20px;" src="/img/drop.png" width="22.5px" height="15px"></p>
-                <ul>
-                    <li><a href="/admin/postar">Postar</a></li>
-                    <li><a href="/agenda">Visualizar postagens</a></li>
-                </ul>
-            </li>
-            <li><a href="/register">Registrar Administrador</a></li>
-            <li><a href="#">Contatar professores</a></li>
-        </ul><br><br><br><br><br>
-    </div>
-
     <div class="divTop">
         <a id="1" onclick="drop(this)">Gerenciar</a>
         <a href="/register">Registrar</a>
         <a href="#">Contatar</a>
     </div>
 
-    <div class="divMid">
+    <div class="divMid">"
         <span style="margin-bottom: 300px; display:flex; flex-direction:column; align-items:center; justify-center: center;">
             <a href="/admin/postar">Postar</a>
             <a href="/agenda">Visualizar postagens</a>
         </span>
     </div>
 
-    <div class="things">
+    <div class="divLat" id="lat">
+        <img src="/img/hide.ico" class="hide" id="hide" onclick="hide()">
+
+        <ul id="nav">
+            <li id="banana"><p onclick="abrir()">Gerenciar postagens&nbsp;&nbsp;&nbsp;<img style="margin-top: -20px;" src="/img/drop.png" width="22.5px" height="15px"></p>
+                <div class="items" id="it">
+                    <ul>
+                        <li><a href="/admin/postar">Postar</a></li>
+                        <li><a href="/agenda">Visualizar postagens</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li><a href="/register">Registrar Administrador</a></li>
+            <li><a href="#">Contatar professores</a></li>
+        </ul><br><br><br><br><br>
+    </div>
+
+    <div class="things" id="thg">
         {{#if message}}
             <div class="message-success">
                 {{message}}
             </div>
         {{/if}}
-        <div class="list">
+
+        <div class="search">
+            <form method="GET" action="/admin/search">
+                <input type="search" placeholder="Buscar..." name="barra" {{#if search}}value={{search}}{{/if}}>
+                <img src="/img/search.ico">
+            </form>
+        </div><br>
+
+        <div class="list" id="lt">
             {{#each data}}
                 <a href="/admin/materia/{{this.materia}}">
                     <div class="card">
@@ -59,17 +75,71 @@
 </div>
 
 <script type="text/javascript">
+    var c = 0;
+    
+    function hide() {
+        var lat = document.querySelector('#lat');
+        var icon = document.querySelector('#hide');
+        var list = document.querySelector('#thg');
+        var options = document.querySelector('#nav');
+        var cards = $('.card');
+
+        if (c==0) {
+            lat.style.width = '5%';
+
+            icon.style.transition = '.5s ease-in-out';
+            icon.style.marginTop = '25px';
+            icon.style.marginLeft = '15%';
+            icon.style.transform = 'rotate(-180deg)';
+
+            list.style.width = '80%';
+            list.style.left = '10%';
+
+            options.style.opacity = 0;
+
+            cards.each((i,e)=>{
+                $(e).css('margin-left','6px');
+                $(e).css('margin-right','23px');
+            });
+
+            c++;
+        } else {
+            lat.style.width = '30%';
+
+            icon.style.marginTop = '10%';
+            icon.style.marginLeft = '70%';
+            icon.style.transform = 'rotate(-360deg)';
+
+            setTimeout(()=>{
+                icon.style.transition = '.1s ease-in-out';
+            },500);
+
+            list.style.width = '70%';
+            list.style.left = '30%';
+
+            options.style.opacity = 1;
+
+            cards.each((i,e)=>{
+                $(e).css('margin','35.8px');
+            });
+
+            c = 0;
+        }
+    }
+    
     var click = 0;
     
     function abrir() {
-        var ul = document.querySelector('#nav li ul');
+        var ul = document.getElementById('it');
 
-        if(click===0) {
-            ul.style.display = 'block';
+        if (click == 0) {
+            ul.style.height = '60px';
+            ul.style.opacity = 1;
             click++;
         } else {
-            ul.style.display = 'none';
-            click = 0;
+            ul.style.height = '0';
+            ul.style.opacity = 0;
+            click--;
         }
     }
 

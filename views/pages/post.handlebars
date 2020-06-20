@@ -6,13 +6,14 @@
 <hr>
 
 <div class="tudo">
-       <div class="postIn">
-           <p>{{post.conteudo}}</p>
-      </div>
+    <div class="postIn">
+       <p>{{post.conteudo}}</p>
+    </div>
 
-     <div class="anexo">
+    <div class="anexo">
         <h3>Anexo</h3>
-        {{#if (isdefined post.anexos)}}
+        {{#if post.anexos}}
+            <img src="{{post.anexos}}" style="max-width: 40%; height: auto;"><br>
             <form method="post">
                 <input type="submit" class="btn" value="Baixar anexo">
             </form>

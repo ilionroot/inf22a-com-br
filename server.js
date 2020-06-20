@@ -11,6 +11,7 @@ const bodyParser = require('body-parser');
 
 const flush = require('connect-flash');
 const sequelize = require('sequelize');
+const Op = sequelize.Op;
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passport = require('passport');
@@ -26,7 +27,13 @@ const storage = multer.diskStorage({
         cb(null, file.originalname + Date.now() + path.extname(file.originalname));
     }
 });
-const upload = multer({storage});
+const upload = multer({
+    storage,
+    limits: {
+        fileSize: 25000000
+    }
+}).single('fileSender');
+
 const fs = require('fs');
 
 // Passport e Sessão
@@ -94,7 +101,7 @@ const fs = require('fs');
         return value !== null;
     });
 
-    app.use(express.static(path.join(__dirname, "public")))
+    app.use(express.static(path.join(__dirname, "public")));
     app.engine('handlebars', handleBars({defaultLayout: 'main'}));
     app.set('view engine', 'handlebars');
 
@@ -119,10 +126,10 @@ const fs = require('fs');
                     materia: document.materia,
                     titulo: document.titulo,
                     conteudo: document.conteudo,
-                    limite: new Date((new Date(document.limite).setHours(new Date(document.limite).getHours() + 3)))
+                    limite: new Date((new Date(document.limite).setHours(new Date(document.limite).getHours() + 3))).toString().substr(0,21)
                   }
                 })
-              }
+            }
             
             res.render('pages/agenda', {
                 posts: informations.postDocuments
@@ -130,10 +137,12 @@ const fs = require('fs');
         });
     })
 
-    app.get('/posts/:id', (req, res) => {
-        Tarefa.findOne({
+    app.get('/posts/:id', async (req, res) => {
+        var id = req.params.id;
+        
+        const pesquisa = await Tarefa.findOne({
             where: {
-                id: req.params.id
+                id: id
             }
         }).then(data=>{
             res.render('pages/post', {
@@ -142,11 +151,55 @@ const fs = require('fs');
                     titulo: data.titulo,
                     conteudo: data.conteudo,
                     limite: new Date((new Date(data.limite).setHours(new Date(data.limite).getHours() + 3))).toString().substr(0,21),
-                    anexos: data.anexos
+                    anexos: ()=>{
+                        if (data.anexos != null) {
+                            var extensao = (data.anexos.substring(data.anexos.lastIndexOf("."))).toLowerCase();
+                        var img = new Array(".gif", ".jpg", ".png", ".jpeg", ".bmp", ".svg", ".tiff");
+
+                        var ver = false;
+
+                        for (var i = 0; i < img.length; i++) {
+                            if(extensao == img[i]) {
+                                ver = true;
+                                break;
+                            }
+                        }
+
+                        if (ver) {
+                            return data.anexos;
+                        } else {
+                            if (extensao == '.docx' | extensao == '.doc') {
+                                return '/icons/docx.png';
+                            }
+
+                            if (extensao == '.xlsx') {
+                                return '/icons/xlsx.png';
+                            }
+
+                            if (extensao == '.pdf') {
+                                return '/icons/pdf.png';
+                            }
+                            
+                            if (extensao == '.pptx' | extensao == '.ppt' | extensao == '.pps') {
+                                return '/icons/pptx.png';
+                            }
+                            
+                            if (extensao == '.exe') {
+                                return '/icons/exe.png';
+                            }
+
+                            if (extensao == '.mov' | extensao == '.mp4' | extensao == '.avi' | extensao == '.flv' | extensao == '.wmv' | extensao == '.mkv' | extensao == '.rm') {
+                                return '/icons/video.png'
+                            } else {
+                                return '/icons/file.png';
+                            }
+                        }
+                        }
+                    }
                 }
             });
         }).catch(err=>{
-            throw err;
+            console.log(err);
         })
     });
 
@@ -166,10 +219,13 @@ const fs = require('fs');
     })
 
     app.get('/admin/postar', authenticationMiddleware, (req, res) => {
-        res.render('pages/postar');
+        res.render('pages/postar',{
+            tooLarge: req.flash('tooLarge'),
+            error: req.flash('error')
+        });
     })
 
-    app.post('/admin/postar', authenticationMiddleware, upload.single('fileSender'), (req, res) => {
+    app.post('/admin/postar', authenticationMiddleware, (req, res) => {
         var data = new Date(new Date(req.body.prazo) - new Date(req.body.prazo).getTimezoneOffset() * 60000);
 
         var arquivo;
@@ -178,35 +234,76 @@ const fs = require('fs');
             arquivo = req.file.filename
         }
         
-        Tarefa.create({
-            titulo: req.body.titulo,
-            materia: req.body.materia,
-            conteudo: req.body.conteudo,
-            anexos: arquivo,
-            limite: data
-        }).then(()=>{
-            req.flash('success', 'Postagem realizada com sucesso!');
-            res.redirect('/admin');
-        }).catch(err=>{
-            throw err;
-        })
+        upload(req, res, function (err) {
+            if (err instanceof multer.MulterError) {
+                req.flash('tooLarge', 'Arquivo muito grande!');
+                res.redirect('/admin/postar');
+            } else if (err) {
+                req.flash('error', 'Ocorreu um erro ao enviar o arquivo!');
+                res.redirect('/admin/postar');
+            }
+
+            Tarefa.create({
+                titulo: req.body.titulo,
+                materia: req.body.materia,
+                conteudo: req.body.conteudo,
+                anexos: arquivo,
+                limite: data
+            }).then(()=>{
+                req.flash('success', 'Postagem realizada com sucesso!');
+                res.redirect('/admin');
+            }).catch(err=>{
+                req.flash('error', 'Erro ao realizar postagem!');
+            })
+        });
     });
 
     app.get('/admin', authenticationMiddleware, async (req, res)=>{
         var qtdCards = await Tarefa.count({group: ["materia"]}).then(data=>{
             res.render('pages/admin', {
                 data: data,
-                message: req.flash('success')
+                message: req.flash('success'),
+                results: false,
             });
 
             console.log(data);
         }).catch(err=>{
             throw err;
         })
-    })
+    });
+
+    app.get('/admin/search/', authenticationMiddleware, async (req, res) => {
+        var searchParams = req.query.barra.split(' ');
+
+        await Tarefa.count({
+            group: ["materia"],
+            where: {
+                materia: {
+                    [Op.like]: '%' + searchParams + '%'
+                }
+            }
+        }).then(data=>{
+            console.log(data);
+
+            const information = {
+                postInfos: data.map(document => {
+                  return {
+                    materia: document.materia,
+                    count: document.count
+                  }
+                })
+            }
+
+            res.render('pages/admin', {
+                data: information.postInfos,
+                results: true,
+                search: searchParams
+            })
+        })
+    });
 
     app.get('/admin/materia/:materia', authenticationMiddleware, async (req, res)=>{
-        Tarefa.findAll({
+        await Tarefa.findAll({
             where: {
                 materia: req.params.materia
             },
@@ -228,9 +325,43 @@ const fs = require('fs');
             res.render('pages/materia', {
                 post: informations.postDocuments
             });
+
+            console.log(data.id);
         }).catch(err=>{
             throw err;
         })
+    })
+
+    app.post('/admin/materia/:materia', authenticationMiddleware, async (req, res)=>{
+        Tarefa.findAll({
+            where: {
+                titulo: {
+                    [Op.like]: '%' + req.body.barra + '%'
+                },
+                materia: req.params.materia
+            }
+        }).then(data=>{
+            const informations = {
+                postDocuments: data.map(document=>{
+                    return {
+                        id: document.id,
+                        limite: new Date((new Date(document.limite).setHours(new Date(document.limite).getHours() + 3))).toString().substr(0,21),
+                        titulo: document.titulo,
+                        materia: document.materia,
+                        conteudo: document.conteudo,
+                        anexos: document.anexos
+                    }
+                })
+            }
+
+            res.render('pages/materia', {
+                post: informations.postDocuments,
+                search: req.body.barra.split(' '),
+                materia: req.params.materia
+            });
+        }).catch(err=>{
+            throw err;
+        });
     })
 
     app.get('/admin/delete/:id', authenticationMiddleware, (req, res) => {
@@ -258,13 +389,14 @@ const fs = require('fs');
                 materia: data.materia,
                 titulo: data.titulo,
                 conteudo: data.conteudo,
-                limite: (new Date(data.limite).toISOString().slice(0, 19))
+                limite: (new Date(data.limite).toISOString().slice(0, 19)),
+                error: req.flash('error')
             });
 
             console.log(data.limite);
         }).catch(err=>{
             req.flash('error', 'Falha ao carregar página: ' + err);
-            throw err;
+            res.redirect('/admin/edit/' + req.params.id);
         })
     })
 

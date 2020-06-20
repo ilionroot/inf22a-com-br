@@ -1,13 +1,23 @@
 <br><br><br><br>
-{{#each post}}
-    <div class="post">
-        <small>Prazo: {{this.limite}}</small>
-        <h2>{{this.titulo}}</h2>
-        <h3>{{this.materia}}</h3>
-        <p>{{this.conteudo}}</p>
-        <hr>
-        <a href="/posts/{{this.id}}"><button class="btn">Ver post</button></a>
-        <a href="/admin/edit/{{this.id}}"><button class="btn edit">Editar</button></a>
-        <a href="/admin/delete/{{this.id}}"><button class="btn delete">Excluir</button></a>
-    </div><br>
-{{/each}}
+
+<div class="search">
+    <form method="POST">
+        <input type="search" placeholder="Buscar..." name="barra" {{#if search}}value={{search}}{{/if}}>
+        <img src="/img/search.ico">
+    </form>
+</div><br><br><br>
+
+<div class="bodyBox">
+    {{#each post}}
+        <div class="post">
+            <small>Prazo: {{this.limite}}</small>
+            <h2>{{this.titulo}}</h2>
+            <h3>{{this.materia}}</h3>
+            <p>{{this.conteudo}}</p>
+            <hr>
+            <a href="/posts/{{this.id}}"><button class="btn">Ver post</button></a>
+            <a href="/admin/edit/{{this.id}}"><button class="btn edit">Editar</button></a>
+            <a href="/admin/delete/{{this.id}}"><button class="btn delete">Excluir</button></a>
+        </div><br>
+    {{/each}}
+</div>

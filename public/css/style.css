@@ -5,6 +5,17 @@
     border-radius: 10px;
 
     padding: 20px;
+
+    width: 60%;
+    overflow-x: hidden;
+}
+
+.content {
+    width: 100%;
+    height: 75px;
+    overflow-wrap: break-word;
+    overflow-y: hidden;
+    max-height: 75px;
 }
 
 .btn {
@@ -33,7 +44,7 @@
 
     border-radius: 10px 0 0 10px;
 
-    width: 97.5%;
+    width: 80%;
     height: 60vh;
 
     overflow-y: auto;
@@ -57,6 +68,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
 }
 
 body small {
@@ -193,6 +205,7 @@ body small {
 
     overflow: auto;
     z-index: 0;
+    transition: .5s ease-in-out;
 }
 
 .list a {
@@ -201,11 +214,10 @@ body small {
 }
 
 .card {
-    background-color: snow;
+    background-color: rgb(255, 255, 255);
 
     border-radius: 10px;
     border: lightgray solid 0.5px;
-    box-shadow: lightgray 0 0 100px;
 
     padding:10px;
     width: 200px;
@@ -311,8 +323,10 @@ body small {
 .divLat {
     background-color: rgb(235, 235, 235);
 
+    border-radius: 0 80px 80px 0;
+
     width: 30%;
-    height: 100vh;
+    height: 91vh;
 
     position: fixed;
     left:0;
@@ -323,6 +337,9 @@ body small {
 
     align-items: center;
     justify-content: center;
+
+    transition: .5s ease-in-out;
+    overflow: hidden;
 }
 
 .divLat ul li{
@@ -361,10 +378,6 @@ body small {
     margin-bottom: 15px;
 }
 
-#nav li ul{
-    display: none;
-}
-
 #nav li ul li a {
     font-size: 20px;
 }
@@ -380,6 +393,7 @@ body small {
     overflow: auto;
 
     z-index: 0;
+    transition: .5s ease-in-out;
 }
 
 .divTop {
@@ -389,6 +403,90 @@ body small {
 .tudo {
     display:flex;
     flex-direction:row;
+    justify-content: center;
+
+    margin: 16px 30px 0 30px;
+}
+
+.search {
+    display: flex;
+    flex-direction: row;
+
+    position: absolute;
+
+    width: 98%;
+    height: 50px;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.search input[type=search] {
+    border: none;
+    background-color: transparent;
+
+    padding: 5px;
+    padding-left: 35px;
+    width: 200px;
+
+    border-bottom: gray solid .5px;
+    outline: none;
+}
+
+.search img {
+    height: 20px;
+    width: 20px;
+    position: absolute;
+    margin-left: -195px;
+    margin-top: 3px;
+}
+
+.bodyBox {
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.hide {
+    margin-left: 70%;
+    margin-top: 10%;
+    transition: .1s ease;
+    cursor: pointer;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: .1s ease-in-out;
+    z-index: 10;
+}
+
+#nav {
+    transition: .25s ease-in-out;
+    margin-top: 30%;
+}
+
+.hide:hover {
+    -moz-transform: scale(1.05);
+    -webkit-transform: scale(1.05);
+    -o-transform: scale(1.05);
+    transform: scale(1.05);
+}
+
+.items {
+    -moz-transition: .2s ease-in-out;
+    -webkit-transition: .2s ease-in-out;
+    -o-transition: .2s ease-in-out;
+    transition: .2s ease-in-out;
+
+    width: auto;
+    height: 0;
+    opacity: 0;
+}
+
+.divMid {
+    display: none;
 }
 
 @media screen and (max-width: 1195px) {
@@ -421,6 +519,11 @@ body small {
 
         transition: .5s ease-in-out;
         font-size: 0;
+        z-index: 1;
+    }
+
+    .pos {
+        flex-direction: column;
     }
     
     .divMid a {
@@ -489,6 +592,8 @@ body small {
         flex-direction: column;
         align-items: center;
         justify-content: center;
+
+        overflow: scroll;
     }
 
     .anexo input{
