@@ -48,7 +48,7 @@
     height: 60vh;
 
     overflow-y: auto;
-    overflow-x: hidden;
+    overflow-wrap: break-word;
 
     padding-top: 5px;
     padding-left: 30px;
