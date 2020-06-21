@@ -251,6 +251,7 @@ const fs = require('fs');
                 limite: data
             }).then(()=>{
                 req.flash('success', 'Postagem realizada com sucesso!');
+                console.log(req.file.filename);
                 res.redirect('/admin');
             }).catch(err=>{
                 req.flash('error', 'Erro ao realizar postagem!');
