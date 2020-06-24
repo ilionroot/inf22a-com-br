@@ -10,6 +10,13 @@
     body {
         background-color: snow;
     }
+
+    #dropDown {
+        -moz-transition: .2s ease;
+        -webkit-transition: .2s ease;
+        -o-transition: .2s ease;
+        transition: .2s ease;
+    }
 </style>
 
 <br>
@@ -32,7 +39,7 @@
         <img src="/img/hide.ico" class="hide" id="hide" onclick="hide()">
 
         <ul id="nav">
-            <li id="banana"><p onclick="abrir()">Gerenciar postagens&nbsp;&nbsp;&nbsp;<img style="margin-top: -20px;" src="/img/drop.png" width="22.5px" height="15px"></p>
+            <li id="banana"><p onclick="abrir()">Gerenciar postagens&nbsp;&nbsp;&nbsp;<img id="dropDown" style="margin-top: -20px;" src="/img/drop.png" width="22.5px" height="15px"></p>
                 <div class="items" id="it">
                     <ul>
                         <li><a href="/admin/postar">Postar</a></li>
@@ -131,14 +138,21 @@
     
     function abrir() {
         var ul = document.getElementById('it');
+        var dropDown = document.getElementById('dropDown');
 
         if (click == 0) {
             ul.style.height = '60px';
             ul.style.opacity = 1;
+
+            dropDown.style.transform = 'rotate(-180deg)';
+
             click++;
         } else {
             ul.style.height = '0';
             ul.style.opacity = 0;
+
+            dropDown.style.transform = 'rotate(0deg)';
+
             click--;
         }
     }

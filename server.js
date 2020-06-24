@@ -21,17 +21,17 @@ const crypt = require('./crypto');
 const multer = require('multer');
 const storage = multer.diskStorage({
     destination: function(req, file, cb){
-        cb(null, "docs/");
+        cb(null, __dirname + "/public/docs/");
     },
     filename: function(req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+        cb(null, file.originalname + '-' + Date.now() + path.extname(file.originalname));
     }
 });
 
 const upload = multer({
     storage,
     limits: {fileSize: 25000000}
-}).single('fileSender');
+});
 
 const fs = require('fs');
 
@@ -96,6 +96,11 @@ const fs = require('fs');
     }
  
 // Configs
+    app.use(express.urlencoded({ extended: true }));
+
+    app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(bodyParser.json());
+
     HandleBars.registerHelper('isdefined', function (value) {
         return value !== null;
     });
@@ -103,11 +108,6 @@ const fs = require('fs');
     app.use(express.static(path.join(__dirname, "public")));
     app.engine('handlebars', handleBars({defaultLayout: 'main'}));
     app.set('view engine', 'handlebars');
-
-    app.use(express.urlencoded({ extended: true }));
-
-    app.use(bodyParser.urlencoded({ extended: false }));
-    app.use(bodyParser.json());
 
     app.use(express.static(path.resolve(__dirname, './docs')));
 // Rotas
@@ -217,7 +217,6 @@ const fs = require('fs');
         }).then(data=>{
             var file = data.anexos;
             var path = require('path');
-            console.log(file);
 
             var path1 = path.resolve('.') + '/public/docs/' + file;
             res.download(path1);
@@ -231,39 +230,30 @@ const fs = require('fs');
         });
     })
 
-    app.post('/admin/postar', authenticationMiddleware, (req, res) => {
+    app.post('/admin/postar', upload.single('fileSender'), authenticationMiddleware, (req, res) => {
         var data = new Date(new Date(req.body.prazo) - new Date(req.body.prazo).getTimezoneOffset() * 60000);
+        console.log(req.body.conteudo);
 
         var arquivo;
- 
-        upload(req, res, (err) => {
-            if(req.file != null && req.file != undefined) {
-                arquivo = req.file.filename;
-                console.log(arquivo); //Erro
-            }
-            
-            if (err instanceof multer.MulterError) {
-                req.flash('tooLarge', 'Arquivo muito grande!');
-                res.redirect('/admin/postar');
-            } else if (err) {
-                req.flash('error', 'Ocorreu um erro ao enviar o arquivo!');
-                res.redirect('/admin/postar');
-            }
+        
+        if(req.file != null && req.file != undefined) {
+            arquivo = req.file.filename;
+        }
 
-            Tarefa.create({
-                titulo: req.body.titulo,
-                materia: req.body.materia,
-                conteudo: req.body.conteudo,
-                anexos: arquivo,
-                limite: data
-            }).then(()=>{
-                req.flash('success', 'Postagem realizada com sucesso!');
-                console.log(arquivo);
-                res.redirect('/admin');
-            }).catch(err=>{
-                req.flash('error', 'Erro ao realizar postagem!');
-            })
-        });
+        Tarefa.create({
+            titulo: req.body.titulo,
+            materia: req.body.materia,
+            conteudo: req.body.conteudo,
+            anexos: arquivo,
+            limite: data
+        }).then(()=>{
+            req.flash('success', 'Postagem realizada com sucesso!');
+            console.log("Arquivo: " + arquivo);
+            console.log("Data: " + data);
+            res.redirect('/admin');
+        }).catch(err=>{
+            req.flash('error', 'Erro ao realizar postagem!');
+        })
     });
 
     app.get('/admin', authenticationMiddleware, async (req, res)=>{
