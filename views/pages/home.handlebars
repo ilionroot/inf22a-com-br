@@ -66,9 +66,14 @@
     }
 </style>
 
-<div class="opa">
-    <h1>Seja bem-vindo ao INF22A</h1>
-
-    <a href="/agenda"><input type="button" class="btn" value="Agenda"></a>
-    <a href="/admin"><input type="button" class="btn btn1" value="Painel Administrativo"></a>
-</div>
+<main data-router-wrapper>
+    <section data-router-view="home" class="home">
+        <div class="opa home-content">
+            <div class="home-presentation">
+                <h1>Seja bem-vindo ao INF22A</h1>
+            </div>
+            <a href="/agenda"><input type="button" class="btn" value="Agenda"></a>
+            <a href="/admin"><input type="button" class="btn btn1" value="Painel Administrativo"></a>
+        </div>
+    </section> 
+</main>
