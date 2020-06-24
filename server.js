@@ -24,14 +24,13 @@ const storage = multer.diskStorage({
         cb(null, "docs/");
     },
     filename: function(req, file, cb) {
-        cb(null, file.originalname + Date.now() + path.extname(file.originalname));
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
     }
 });
+
 const upload = multer({
     storage,
-    limits: {
-        fileSize: 25000000
-    }
+    limits: {fileSize: 25000000}
 }).single('fileSender');
 
 const fs = require('fs');
@@ -138,68 +137,75 @@ const fs = require('fs');
     })
 
     app.get('/posts/:id', async (req, res) => {
-        var id = req.params.id;
-        
-        const pesquisa = await Tarefa.findOne({
+        var idPost = req.params.id;
+        console.log(idPost);
+
+        await Tarefa.findOne({ // Um problema resolvido
             where: {
-                id: id
+                id: idPost
             }
         }).then(data=>{
-            res.render('pages/post', {
-                post: {
-                    materia: data.materia,
-                    titulo: data.titulo,
-                    conteudo: data.conteudo,
-                    limite: new Date((new Date(data.limite).setHours(new Date(data.limite).getHours() + 3))).toString().substr(0,21),
-                    anexos: ()=>{
-                        if (data.anexos != null) {
-                            var extensao = (data.anexos.substring(data.anexos.lastIndexOf("."))).toLowerCase();
-                        var img = new Array(".gif", ".jpg", ".png", ".jpeg", ".bmp", ".svg", ".tiff");
+            if(true) {
+                var arquivo;
 
-                        var ver = false;
+                if (data.anexos != null) {
+                    var extensao = (data.anexos.substring(data.anexos.lastIndexOf("."))).toLowerCase();
+                    var img = new Array(".gif", ".jpg", ".png", ".jpeg", ".bmp", ".svg", ".tiff");
 
-                        for (var i = 0; i < img.length; i++) {
-                            if(extensao == img[i]) {
-                                ver = true;
-                                break;
-                            }
+                    var ver = false;
+
+                    for (var i = 0; i < img.length; i++) {
+                        if(extensao == img[i]) {
+                            ver = true;
+                            break;
+                        }
+                    }
+
+                    if (ver) {
+                        arquivo = '/docs/' + data.anexos;
+                    } else {
+                        if (extensao == '.docx' | extensao == '.doc') {
+                            arquivo = '/docs/icons/docx.png';
                         }
 
-                        if (ver) {
-                            return data.anexos;
+                        if (extensao == '.xlsx') {
+                            arquivo = '/docs/icons/xlsx.png';
+                        }
+
+                        if (extensao == '.pdf') {
+                            arquivo = '/docs/icons/pdf.png';
+                        }
+                        
+                        if (extensao == '.pptx' | extensao == '.ppt' | extensao == '.pps') {
+                            arquivo = '/docs/icons/pptx.png';
+                        }
+                        
+                        if (extensao == '.exe') {
+                            arquivo = '/docs/icons/exe.png';
+                        }
+
+                        if (extensao == '.mov' | extensao == '.mp4' | extensao == '.avi' | extensao == '.flv' | extensao == '.wmv' | extensao == '.mkv' | extensao == '.rm') {
+                            arquivo = '/docs/icons/video.png'
                         } else {
-                            if (extensao == '.docx' | extensao == '.doc') {
-                                return '/icons/docx.png';
-                            }
-
-                            if (extensao == '.xlsx') {
-                                return '/icons/xlsx.png';
-                            }
-
-                            if (extensao == '.pdf') {
-                                return '/icons/pdf.png';
-                            }
-                            
-                            if (extensao == '.pptx' | extensao == '.ppt' | extensao == '.pps') {
-                                return '/icons/pptx.png';
-                            }
-                            
-                            if (extensao == '.exe') {
-                                return '/icons/exe.png';
-                            }
-
-                            if (extensao == '.mov' | extensao == '.mp4' | extensao == '.avi' | extensao == '.flv' | extensao == '.wmv' | extensao == '.mkv' | extensao == '.rm') {
-                                return '/icons/video.png'
-                            } else {
-                                return '/icons/file.png';
-                            }
-                        }
+                            arquivo = '/docs/icons/file.png';
                         }
                     }
                 }
-            });
+
+                console.log(arquivo);
+
+                res.render('pages/post', {
+                    post: {
+                        materia: data.materia,
+                            titulo: data.titulo,
+                            conteudo: data.conteudo,
+                            limite: new Date((new Date(data.limite).setHours(new Date(data.limite).getHours() + 3))).toString().substr(0,21),
+                            anexos: arquivo
+                    }
+                });
+            }
         }).catch(err=>{
-            console.log(err);
+            res.send(err);
         })
     });
 
@@ -213,7 +219,7 @@ const fs = require('fs');
             var path = require('path');
             console.log(file);
 
-            var path1 = path.resolve('.') + '/docs/' + file;
+            var path1 = path.resolve('.') + '/public/docs/' + file;
             res.download(path1);
         })
     })
@@ -229,12 +235,13 @@ const fs = require('fs');
         var data = new Date(new Date(req.body.prazo) - new Date(req.body.prazo).getTimezoneOffset() * 60000);
 
         var arquivo;
-
-        if(req.file!=null) {
-            arquivo = req.file.filename
-        }
-        
-        upload(req, res, function (err) {
+ 
+        upload(req, res, (err) => {
+            if(req.file != null && req.file != undefined) {
+                arquivo = req.file.filename;
+                console.log(arquivo); //Erro
+            }
+            
             if (err instanceof multer.MulterError) {
                 req.flash('tooLarge', 'Arquivo muito grande!');
                 res.redirect('/admin/postar');
@@ -251,7 +258,7 @@ const fs = require('fs');
                 limite: data
             }).then(()=>{
                 req.flash('success', 'Postagem realizada com sucesso!');
-                console.log(req.file.filename);
+                console.log(arquivo);
                 res.redirect('/admin');
             }).catch(err=>{
                 req.flash('error', 'Erro ao realizar postagem!');
