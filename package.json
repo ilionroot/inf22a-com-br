@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@dogstudio/highway": "^2.2.1",
     "body-parser": "^1.19.0",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.5",
@@ -16,6 +17,7 @@
     "express": "^4.17.1",
     "express-handlebars": "^4.0.4",
     "express-session": "^1.17.1",
+    "gsap": "^3.3.4",
     "handlebars": "^4.7.6",
     "multer": "^1.4.2",
     "mysql2": "^2.1.0",

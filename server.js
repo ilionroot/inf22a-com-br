@@ -134,7 +134,70 @@ const fs = require('fs');
                 posts: informations.postDocuments
             });
         });
-    })
+    });
+
+    app.post('/agenda', async (req, res) => {
+        if (req.body.materia != "Todas") {
+            await Tarefa.findAll({
+                where: {
+                    titulo: {
+                        [Op.like]: '%' + req.body.barra + '%'
+                    },
+                    materia: req.body.materia
+                }
+            }).then(data=>{
+                const informations = {
+                    postDocuments: data.map(document=>{
+                        return {
+                            id: document.id,
+                            limite: new Date((new Date(document.limite).setHours(new Date(document.limite).getHours() + 3))).toString().substr(0,21),
+                            titulo: document.titulo,
+                            materia: document.materia,
+                            conteudo: document.conteudo,
+                            anexos: document.anexos
+                        }
+                    })
+                }
+    
+                res.render('pages/agenda', {
+                    posts: informations.postDocuments,
+                    search: req.body.barra.split(' '),
+                    materia: req.params.materia
+                });
+            }).catch(err=>{
+                throw err;
+            });
+        } else {
+            await Tarefa.findAll({
+                where: {
+                    titulo: {
+                        [Op.like]: '%' + req.body.barra + '%'
+                    }
+                }
+            }).then(data=>{
+                const informations = {
+                    postDocuments: data.map(document=>{
+                        return {
+                            id: document.id,
+                            limite: new Date((new Date(document.limite).setHours(new Date(document.limite).getHours() + 3))).toString().substr(0,21),
+                            titulo: document.titulo,
+                            materia: document.materia,
+                            conteudo: document.conteudo,
+                            anexos: document.anexos
+                        }
+                    })
+                }
+    
+                res.render('pages/agenda', {
+                    posts: informations.postDocuments,
+                    search: req.body.barra.split(' '),
+                    materia: req.params.materia
+                });
+            }).catch(err=>{
+                throw err;
+            });
+        }
+    });
 
     app.get('/posts/:id', async (req, res) => {
         var idPost = req.params.id;
@@ -331,7 +394,7 @@ const fs = require('fs');
     })
 
     app.post('/admin/materia/:materia', authenticationMiddleware, async (req, res)=>{
-        Tarefa.findAll({
+        await Tarefa.findAll({
             where: {
                 titulo: {
                     [Op.like]: '%' + req.body.barra + '%'
