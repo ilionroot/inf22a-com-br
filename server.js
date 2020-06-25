@@ -18,6 +18,9 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const crypt = require('./crypto');
 
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+
 const multer = require('multer');
 const storage = multer.diskStorage({
     destination: function(req, file, cb){
@@ -93,6 +96,20 @@ const fs = require('fs');
         }
 
         res.redirect('/login?fail=true');
+    }
+
+    var tempUser = undefined;
+
+    const isAdm = (req, res, next) => {  
+        if (req.isAuthenticated()) {
+            return next();
+        }
+
+        if (tempUser == undefined) {
+            res.redirect('/set-username');
+        } else {
+            res.redirect('/chat/in?admin=false');
+        }
     }
  
 // Configs
@@ -539,7 +556,53 @@ const fs = require('fs');
         }
     });
 
-app.listen(process.env.PORT || 3000, ()=>{
+    app.get('/chat', isAdm, (req, res) => {
+        res.redirect('/chat/in?admin=true');
+    });
+
+    app.get('/set-username', (req, res)=>{
+        res.render('pages/set-username');
+    });
+
+    app.post('/set-username', (req, res)=>{
+        tempUser = req.body.username;
+        console.log(tempUser);
+
+        res.redirect('/chat/in?admin=false');
+    });
+
+    app.get('/chat/in', (req, res)=>{
+        if(req.query.admin == 'true') {
+            User.findOne({where: {
+                id: req.user
+            }}).then(data=>{
+                console.log(data.username);
+                
+                res.render('pages/chat', {
+                    user: data.username
+                });
+            }).catch(err=>{
+                res.send(err);
+            })
+        } else if (req.query.admin == 'false'){
+            res.render('pages/chat', {
+                user: tempUser
+            });
+        }
+    });
+
+    io.on('connection', socket=>{
+        console.log('Usuário: ' + socket.id + ' conectou!');
+
+        socket.on('message', message=>{
+            console.log(message.message);
+        })
+
+        socket.on('disconnect', function() {
+            console.log('Usuário desconectado: ' + socket.id);
+        });
+    });
+
+server.listen(process.env.PORT || 3000, ()=>{
     console.log('Server rodando na porta: 3000');
 });
-

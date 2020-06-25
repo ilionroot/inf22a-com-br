@@ -1,0 +1,34 @@
+<style>
+    .form {
+        height: 40%;
+        width: 50%;
+    }
+
+    .form input[type=text] {
+        width: 20%;
+    }
+
+    .form input[type=submit] {
+        height: 50px;
+        width: 60%;
+    }
+
+    @media screen and (max-width: 768px) {
+        .form {
+            width: 80%;
+        }
+
+        .form input[type=text] {
+            width: 50%;
+        }
+    }
+</style>
+
+<div class="container">
+    <form method="POST" class="form">
+        <h1>Entrar no chat</h1>
+        <label style="font-size: 22.5px;">Apelido:</label><br>
+            <input type="text" name="username" required placeholder="Digite seu apelido..." maxlength="20"><br>
+        <input type="submit" value="Entrar no chat">
+    </form>
+</div>

@@ -48,21 +48,37 @@
     }
 
     .btn {
-        width: 150px;
-        background-color: lightgray;
+        /*background-color: rgb(248, 229, 229);*/
+        transition: .3s ease-in-out;
+
+        background-color: rgba(0,0,0,.3);
+        color: snow;
+
+        border:none;
+        width: 300px;
     }
 
     .btn:hover {
-        background-color: lightseagreen;
+        background-color: rgb(32, 178, 170, .5);
+        border: gray solid 2px;
     }
 
     .btn1 {
-        width: 150px;
-        background-color: gray;
+        width: 300px;
+        /*background-color: gray;*/
     }
 
     .btn1:hover {
-        background-color: rgb(91,192,222);;
+        /*background-color: rgb(91,192,222);*/
+    }
+
+    .btn2 {
+        width: 300px;
+        /*background-color: lightgray;*/
+    }
+
+    .btn2:hover {
+        /*background-color: rgb(91,192,222);*/
     }
 </style>
 
@@ -73,6 +89,7 @@
                 <h1>Seja bem-vindo ao INF22A</h1>
             </div>
             <a href="/agenda"><input type="button" class="btn" value="Agenda"></a>
+            <a href="/chat"><input type="button" class="btn btn2" value="Chat público"></a>
             <a href="/admin"><input type="button" class="btn btn1" value="Painel Administrativo"></a>
         </div>
     </section> 
