@@ -1,5 +1,26 @@
 <br><br><br><br>
 
+<style>
+    .search {
+        margin: 0;
+    }
+
+    .post {
+        height: 200px;
+    }
+
+    @media screen and (max-width: 768px) {
+        .post {
+            height: 300px;
+        }
+    }
+
+    .bodyBox {
+        position: absolute;
+        left:0;
+    }
+</style>
+
 <div class="search">
     <form method="POST">
         <input type="search" placeholder="Buscar..." name="barra" {{#if search}}value={{search}}{{/if}}>

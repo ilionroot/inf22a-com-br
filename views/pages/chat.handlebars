@@ -1,5 +1,156 @@
-<br><br><h1>Você entrou no chat!</h1>
-<h2>Apelido: {{user}}</h2>
+<style>
+    .form input[type=submit] {
+        width: 20%;
+        height: 42px;
+    }
+
+    .form input[type=text] {
+        width: 100%;
+        height: 30px;
+        padding-left: 15px;
+
+        border: gray solid .5px;
+        border-radius: 10px;
+    }
+
+    footer {
+        display: none;
+    }
+
+    .container1 {
+        display:flex;
+        flex-direction: column;
+
+        align-items: center;
+        justify-content: center;
+
+        height: 100%;
+        width: 100%;
+    }
+
+    .form {
+        height: 85%;
+        width: 92%;
+    }
+
+    .divLat {
+        border-radius: 0 25px 25px 0;
+    }
+
+    .divLat section {
+        background-color: snow;
+        width: 90%;
+        height: 10%;
+        border-radius: 0 0 50px 50px;
+
+        display: flex;
+        flex-direction: row;
+
+        align-items: center;
+        justify-content: center;
+
+        position: absolute;
+        top: 0;
+        float: top;
+    }
+
+    .divLat li {
+        list-style: none;
+    }
+
+    .divLat p {
+        color: black;
+        font-size: 25px;
+        margin-right: 70px;
+        cursor: pointer;
+        transition: .1s ease-in-out;
+    }
+
+    .divLat p:hover {
+        color: grey;
+    }
+
+    .divLat a {
+        text-decoration: none;
+        color: black;
+
+        font-size: 30px;
+        margin-right: 50px;
+
+        transition: .1s ease-in-out;
+    }
+
+    #nav {
+        margin-bottom: 50px;
+    }
+
+    .op {
+        display: none;
+    }
+
+    #dropDown {
+        -moz-transition: .2s ease;
+        -webkit-transition: .2s ease;
+        -o-transition: .2s ease;
+        transition: .2s ease;
+    }
+
+    @media screen and (max-width: 768px) {
+        .chat {
+            width: 100%;
+            margin: 0;
+            height: 100vh;
+        }
+
+        .messages {
+            margin-top: 50px;
+        }
+    }
+</style>
+
+<div style="display:flex;flex-direction:row; height: 100vh; width: 100%; position: fixed; top: 45px; left: 0;">
+    <div class="divLat">
+        <section><small style="font-size: 20px;">Apelido:&nbsp;</small><small id="user" style="font-size: 20px;">{{user}}</small></section>
+
+        <ul id="nav">
+            <li><a href="/chat/in?{{room}}" onclick="publico()">Público</a></li>
+            <li id="banana"><p onclick="abrir()">Admins&nbsp;&nbsp;&nbsp;<img id="dropDown" style="margin-top: -20px;" src="/img/drop.png" width="22.5px" height="15px"></p>
+                <div class="items" id="it">
+                    <ul>
+                        <li><a href="#" onclick="privado(this)">Isa</a></li>
+                        <li><a href="#" onclick="privado(this)">Yasmin</a></li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </div>
+    
+    <div class="chat">
+        <div class="divTop">
+            <a href="#" id="publico">Público</a>
+            <a href="#" onclick="drop(this)">Admins</a>
+        </div>
+
+        <div class="divMid">
+            <span style="margin-bottom: 300px; display:flex; flex-direction:column; align-items:center; justify-center: center;">
+                <a href="#" onclick="privado(this)">Isa</a>
+                <a href="#" onclick="privado(this)">Yasmin</a>
+            </span>
+        </div>
+
+        <div class="container1">
+            <form id="send" class="form">
+                <div class="messages" name="msgs"></div><br>
+                
+                <div style="display: flex; flex-direction: row; width: 100%; align-items: center; justify-content: center;">
+                    <input id="msg" type="text" placeholder="Digite sua mensagem..." required name="message"><br>
+                    <input type="submit" value="Enviar">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <script src="/socket.io/socket.io.js"></script>
+<script src="/js/jquery.js"></script>
 <script src="/js/client.js"></script>

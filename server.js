@@ -591,12 +591,35 @@ const fs = require('fs');
         }
     });
 
+    var msgs = [];
+
     io.on('connection', socket=>{
         console.log('Usuário: ' + socket.id + ' conectou!');
 
-        socket.on('message', message=>{
-            console.log(message.message);
-        })
+        socket.join('public');
+        socket.emit('lastMessages', msgs);
+
+        socket.on('public', message=>{
+            msgs.push(message);
+            io.sockets.in('public').emit('receivePublicMessage', message);
+        });
+
+        socket.on('private', (msg,ademe)=>{
+            io.sockets.in(ademe).emit('receivePrivateMessage', msg);
+        });
+
+        socket.on('publicRoom', (autor)=>{
+            socket.join('public');
+            socket.emit('lastMessages', msgs);
+        });
+
+        socket.on('privateRoom', (autor, adm)=>{
+            socket.join(adm);
+            socket.emit('lastMessages', {
+                autor: 'Sistema',
+                message: 'Você está em um chat privado com ' + adm + '!'
+            });
+        });
 
         socket.on('disconnect', function() {
             console.log('Usuário desconectado: ' + socket.id);
