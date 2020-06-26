@@ -597,27 +597,47 @@ const fs = require('fs');
         console.log('Usuário: ' + socket.id + ' conectou!');
 
         socket.join('public');
-        socket.emit('lastMessages', msgs);
+        io.sockets.in('public').emit('lastMessages', msgs);
 
         socket.on('public', message=>{
             msgs.push(message);
             io.sockets.in('public').emit('receivePublicMessage', message);
         });
 
-        socket.on('private', (msg,ademe)=>{
-            io.sockets.in(ademe).emit('receivePrivateMessage', msg);
+        socket.on('private', (msg)=>{
+            console.log(msg.ademe + " lidia");
+            io.sockets.in(msg.ademe).emit('receivePrivateMessage', msg);
         });
 
-        socket.on('publicRoom', (autor)=>{
+        socket.on('publicRoom', (autor, ademe)=>{
+            socket.leave(ademe);
+
+            io.sockets.in(ademe).emit('receivePublicMessage', {
+                autor: 'Sistema',
+                message: autor + ' saiu da sala!'
+            });
+
             socket.join('public');
             socket.emit('lastMessages', msgs);
         });
 
-        socket.on('privateRoom', (autor, adm)=>{
-            socket.join(adm);
-            socket.emit('lastMessages', {
+        socket.on('privateRoom', (adm)=>{
+            socket.leave('public');
+
+            io.sockets.in('public').emit('receivePublicMessage', {
                 autor: 'Sistema',
-                message: 'Você está em um chat privado com ' + adm + '!'
+                message: adm.autor + ' saiu da sala!'
+            });
+
+            socket.join(adm.adm);
+
+            var lasts = {
+                autor: 'Sistema',
+                message: 'Você está em um chat privado com ' + adm.adm + '!'
+            }
+
+            socket.emit('lastMessages', {
+                lasts
             });
         });
 

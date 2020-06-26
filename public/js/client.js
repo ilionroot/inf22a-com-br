@@ -12,9 +12,19 @@ function scroll(tempo) {
 }
 
 socket.on('lastMessages', lasts=>{
-    lasts.forEach(element => {
-        renderMessage(element); 
-    });
+    if (chat == 1) {
+        $('.messages').innerHTML = '';
+        
+        if (lasts != undefined) {
+            renderMessage(lasts.lasts);
+        }
+    } else if (chat == 0) {
+        if (lasts != undefined) {
+            for(var i = 0; i < lasts.length; i++) {
+                renderMessage(lasts[i]);
+            }
+        }
+    }
 
     scroll(1000);
 });
@@ -25,7 +35,8 @@ socket.on('receivePublicMessage', msg=>{
 });
 
 socket.on('receivePrivateMessage', msg=>{
-    renderMessage(msg);
+    renderMessage(msg.msg);
+    console.log(msg);
     scroll(1000);
 })
 
@@ -42,7 +53,6 @@ $('#send').submit((e)=>{
             }
         
             socket.emit('public', msg);
-            renderMessage(msg);
     
             $('input[name=message]').val("");
     
@@ -55,9 +65,8 @@ $('#send').submit((e)=>{
         
             socket.emit('private', {
                 msg,
-                ademe
+                ademe: 'Isa'
             });
-            renderMessage(msg);
     
             $('input[name=message]').val("");
     
@@ -97,23 +106,34 @@ function recoy() {
 
 function publico() {
     var autor = document.getElementById('user').innerText;
+    $('.messages').innerHTML = '';
 
     socket.emit('publicRoom', {
-        autor
+        autor,
+        ademe: () => {
+            if (ademe != '') {
+                return ademe;
+            } else {
+                return 'public';
+            }
+        }
     });
 
     chat = 0;
+    
+    document.getElementsByClassName('messages')[0].innerHTML = '';
 }
 
 function privado(adm) {
     var autor = document.getElementById('user').innerText;
 
     socket.emit('privateRoom', {
-        autor,
-        adm: adm.innerText
-    })
+        adm: adm.innerText,
+        autor
+    });
 
     chat = 1;
     ademe = adm.innerText;
     recoy(adm);
+    document.getElementsByClassName('messages')[0].innerHTML = '';
 }
