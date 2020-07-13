@@ -115,4 +115,4 @@ function scraping(url) {
     });
 }
 
-scraping('www.jardineiro.net/plantas-de-a-a-z-por-nome-popular');
+scraping('https://www.jardineiro.net/plantas-de-a-a-z-por-nome-popular');
