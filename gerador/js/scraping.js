@@ -67,7 +67,7 @@ function scraping(url) {
             obj.innerHTML = '<h2>' + $(e).find('img')[0].alt + '</h2>' + '<br>';
 
             let infs = $.ajax({
-                url: e.href,
+                url: 'https://cors-anywhere.herokuapp.com/' + e.href,
                 method: "GET",
                 data: {},
                 crossDomain: true,
@@ -115,4 +115,4 @@ function scraping(url) {
     });
 }
 
-scraping('http://www.jardineiro.net/plantas-de-a-a-z-por-nome-popular');
+scraping('https://cors-anywhere.herokuapp.com/https://www.jardineiro.net/plantas-de-a-a-z-por-nome-popular');
