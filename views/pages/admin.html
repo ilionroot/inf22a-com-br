@@ -1,0 +1,88 @@
+<br><br><br>
+
+<style>
+    center {
+        position: fixed;
+        bottom:10px;
+        left: 10%;
+    }
+
+    body {
+        background-color: snow;
+    }
+
+    #dropDown {
+        -moz-transition: .2s ease;
+        -webkit-transition: .2s ease;
+        -o-transition: .2s ease;
+        transition: .2s ease;
+    }
+
+    .search {
+        margin: 0;
+    }
+</style>
+
+<br>
+
+<div style="display:flex;flex-direction:row;">
+    <div class="divTop">
+        <a id="1" onclick="drop(this)">Gerenciar</a>
+        <a href="/admin/register">Registrar</a>
+        <a href="#">Contatar</a>
+    </div>
+
+    <div class="divMid">
+        <span style="margin-bottom: 300px; display:flex; flex-direction:column; align-items:center; justify-center: center;">
+            <a href="/admin/postar">Postar</a>
+            <a href="/agenda">Visualizar postagens</a>
+        </span>
+    </div>
+
+    <div class="divLat" id="lat">
+        <img src="/img/hide.ico" class="hide" id="hide" onclick="hide()">
+
+        <ul id="nav">
+            <li id="banana"><p onclick="abrir()">Gerenciar postagens&nbsp;&nbsp;&nbsp;<img id="dropDown" style="margin-top: -20px;" src="/img/drop.png" width="22.5px" height="15px"></p>
+                <div class="items" id="it">
+                    <ul>
+                        <li><a href="/admin/postar">Postar</a></li>
+                        <li><a href="/agenda">Visualizar postagens</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li><a href="/admin/register">Registrar Administrador</a></li>
+            <li><a href="#">Contatar professores</a></li>
+        </ul><br><br><br><br><br>
+    </div>
+
+    <div class="things" id="thg">
+        {{#if message}}
+            <div class="message-success">
+                {{message}}
+            </div>
+        {{/if}}
+
+        <div class="search">
+            <form method="GET" action="/admin/search">
+                <input type="search" placeholder="Buscar..." name="barra" {{#if search}}value={{search}}{{/if}}>
+                <img src="/img/search.ico">
+            </form>
+        </div><br>
+
+        <div class="list" id="lt">
+            {{#each data}}
+                <a href="/admin/materia/{{this.materia}}">
+                    <div class="card">
+                        <div id="header">{{this.materia}}</div><hr>
+                        <div id="card-body">
+                        <small>Total de postagens: {{this.count}}</small>
+                        </div>
+                    </div>
+                </a>
+            {{/each}}
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/js/script.js"></script>

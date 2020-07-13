@@ -1,0 +1,97 @@
+<br><br><br>
+
+<h1 style="margin: 45px 30px 30px 5%;">Agenda <small>(Role na área de posts para ver mais)</small></h1>
+
+<hr>
+
+<style>
+    .search {
+        background-color: rgba(236, 236, 236, .9);
+        width: auto;
+        padding-left: 25px;
+        padding-right: 25px;
+        height: 10%;
+
+        border-radius: 0 0 25px 25px;
+    }
+
+    footer {
+        position: absolute;
+        display: none;
+    }
+
+    @media screen and (max-width: 1109px) {
+        .search {
+            width: 25%;
+        }
+    }
+
+    @media screen and (max-width: 874px) {
+        .search {
+            width: 17%;
+        }
+    }
+
+    @media screen and (max-width: 768px) {
+        .search {
+            width: 65%;
+        }
+    }
+</style>
+
+<main data-router-wrapper>
+    <section data-router-view="agenda-classe" class= "agenda-classe">
+        <div class="agenda agenda-content">
+            <div class="bodyBox agenda-presentation">
+                <div class="search" style="position: absolute; margin-left: 0;height: 65px;">
+                    <form method="POST">
+                        <input type="search" placeholder="Buscar..." name="barra" {{#if search}}value={{search}}{{/if}}>
+                        <img src="/img/search.ico"><br>
+                        <label style="font-size: 80%">Matéria:</label>
+                        <select name="materia">
+                            <option>Todas</option>
+                            <option>Matemática</option>
+                            <option>Design de Sistemas Web (DSW)</option>
+                            <option>Química</option>
+                            <option>Inglês</option>
+                            <option>Empreendedorismo</option>
+                            <option>História</option>
+                            <option>Física</option>
+                            <option>Biologia</option>
+                            <option>Gramática</option>
+                            <option>Redação</option>
+                            <option>Literatura</option>
+                            <option>Espanhol</option>
+                            <option>Linguagem de Programação I</option>
+                            <option>Desenvolvimento de Sistemas</option>
+                            <option>Religião</option>
+                            <option>Sociologia</option>
+                            <option>Filosofia</option>
+                            <option>Geografia</option>
+                            <option>Educação Física</option>
+                        </select>
+                    </form>
+                </div><br><br><br><br>
+                
+                {{#each posts}}
+                    <div class="post">
+                        <small>Prazo: {{limite}}</small>
+                        <h2>{{titulo}}</h2>
+                        <h3>{{materia}}</h3>
+                        <div class="content">
+                            <p>{{conteudo}}</p>
+                        </div>
+                        <hr>
+                        <a href="/posts/{{id}}"><button class="btn">Ver postagem</button></a>
+                    </div><br>
+                {{/each}}
+            </div>
+
+            <div class="calendario">
+                <iframe src="https://calendar.google.com/calendar/embed?src=classroom106956466431796418886%40group.calendar.google.com&ctz=America%2FSao_Paulo" style="border: 0" width="50%" height="50%" frameborder="0" scrolling="no">
+                    <b style="font-size: 25px;">Carregando calendário...</b>
+                </iframe>
+            </div>
+        </div>
+    </section>
+</main>

@@ -1,0 +1,25 @@
+<br><br><br>
+
+<h1 style="text-align: center;">{{post.materia}} - {{post.titulo}}</h1>
+<center><small>Prazo: {{post.limite}}</small></center>
+
+<hr>
+
+<div class="tudo">
+    <div class="postIn">
+       <p>{{post.conteudo}}</p>
+    </div>
+
+    <div class="anexo">
+        <h3>Anexo</h3>
+        {{#if post.anexos}}
+            <img src="{{post.anexos}}" style="max-width: 40%; height: auto;"><br>
+            <form method="post">
+                <input type="submit" class="btn" value="Baixar anexo">
+            </form>
+
+            {{else}}
+                <h4>Não há anexo!</h4>
+        {{/if}}
+    </div>
+</div>
