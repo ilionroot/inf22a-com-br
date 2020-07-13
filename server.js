@@ -126,6 +126,7 @@ const io = require('socket.io')(server);
     });
 
     app.use(express.static(path.join(__dirname, "public")));
+    app.use(express.static(path.join(__dirname, "gerador")));
     app.engine('html', handleBars({extname:'html', defaultLayout: 'main'}));
     app.set('view engine', 'html');
 
@@ -382,7 +383,7 @@ const io = require('socket.io')(server);
     });
 
     app.get('/gerador', (req, res) => {
-        res.sendFile(__dirname + '/gerador/index.html');
+        res.sendFile(__dirname + '/gerador/plantas.html');
     });
 
     app.get('/wikipedia', (req, res) => {
