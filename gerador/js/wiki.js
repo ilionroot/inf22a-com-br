@@ -2,7 +2,7 @@ $('.form-box').submit((e)=>{
     e.preventDefault();
 
     let wiki = $.ajax({
-        url: 'localhost:8080/https://pt.wikipedia.org/wiki/' + $('#search').val(),
+        url: 'https://cors-anywhere.herokuapp.com/https://pt.wikipedia.org/wiki/' + $('#search').val(),
         method: "GET",
         data: {},
         crossDomain: true,
