@@ -67,7 +67,7 @@ function scraping(url) {
             obj.innerHTML = '<h2>' + $(e).find('img')[0].alt + '</h2>' + '<br>';
 
             let infs = $.ajax({
-                url: 'https://cors-anywhere.herokuapp.com/' + e.href,
+                url: 'http://cors-anywhere.herokuapp.com/' + e.href,
                 method: "GET",
                 data: {},
                 crossDomain: true,
