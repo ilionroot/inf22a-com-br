@@ -1,23 +1,32 @@
-const db = require('./db');
+const mongoose = require('./db');
 
-const Tarefa = db.sequelize.define('agendoca',{
+const TarefaSchema = new mongoose.Schema({
     materia: {
-        type: db.Sequelize.STRING
+        type: String,
+        required: true
     },
     titulo: {
-        type: db.Sequelize.STRING
+        type: String,
+        required: true
     },
     conteudo: {
-        type: db.Sequelize.STRING
+        type: String,
+        required: true
     },
     anexos: {
-        type: db.Sequelize.STRING
+        type: String,
     },
     limite: {
-        type: db.Sequelize.DATE
+        type: Date,
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now()
     }
 });
 
-//Tarefa.sync({ force: true });
+const Tarefa = mongoose.model('Tarefa', TarefaSchema);
 
 module.exports = Tarefa;
+
+//Tarefa.sync({ force: true });

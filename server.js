@@ -3,6 +3,7 @@ const app = express();
 
 const Tarefa = require('./models/tarefa');
 const User = require('./models/user');
+const crypt = require('./crypto');
 
 const handleBars = require('express-handlebars');
 const HandleBars = require('handlebars');
@@ -10,13 +11,10 @@ const path = require('path');
 const bodyParser = require('body-parser');
 
 const flush = require('connect-flash');
-const sequelize = require('sequelize');
-const Op = sequelize.Op;
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const crypt = require('./crypto');
 
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
@@ -68,11 +66,11 @@ const io = require('socket.io')(server);
     passport.use(new LocalStrategy({
         usernameField: 'email',
         passwordField: 'senha'
-    }, function(username,password,done) {
+    }, async function(username,password,done) {
         console.log(username);
         console.log('isso eh um callback');
 
-        User.findOne( { where: { email: username } }).then(async user=>{
+        await User.findOne( { email: username } ).then(async user=>{
             if ( !user ) {
                 return done(null, false, { message: 'Incorrect username!' });
             }
@@ -94,7 +92,7 @@ const io = require('socket.io')(server);
     })
 
     passport.deserializeUser((id, done) => {
-        User.findOne( {where:{id: id}}).then(user=>{
+        User.findOne( { _id: id } ).then(user=>{
             done(null, user.id);
         }).catch(err=>{
             done(err);
@@ -138,7 +136,7 @@ const io = require('socket.io')(server);
     })
 
     app.get('/agenda', (req, res) => {
-        Tarefa.findAll({order: [['id', 'DESC']]}).then(posts=>{ //DESC: do mais novo ao mais antigo //ASC: o inverso
+        Tarefa.find().sort( { _id: '-1' } ).then(posts=>{ //DESC: do mais novo ao mais antigo //ASC: o inverso
             const informations = {
                 postDocuments: posts.map(document => {
                   return {
@@ -159,13 +157,9 @@ const io = require('socket.io')(server);
 
     app.post('/agenda', async (req, res) => {
         if (req.body.materia != "Todas") {
-            await Tarefa.findAll({
-                where: {
-                    titulo: {
-                        [Op.like]: '%' + req.body.barra + '%'
-                    },
-                    materia: req.body.materia
-                }
+            await Tarefa.find({
+                titulo: new RegExp(req.body.barra, 'i'),
+                materia: req.body.materia
             }).then(data=>{
                 const informations = {
                     postDocuments: data.map(document=>{
@@ -189,12 +183,8 @@ const io = require('socket.io')(server);
                 throw err;
             });
         } else {
-            await Tarefa.findAll({
-                where: {
-                    titulo: {
-                        [Op.like]: '%' + req.body.barra + '%'
-                    }
-                }
+            await Tarefa.find({
+                titulo: new RegExp(req.body.barra, 'i')
             }).then(data=>{
                 const informations = {
                     postDocuments: data.map(document=>{
@@ -225,9 +215,7 @@ const io = require('socket.io')(server);
         console.log(idPost);
 
         await Tarefa.findOne({ // Um problema resolvido
-            where: {
-                id: idPost
-            }
+            _id: idPost
         }).then(data=>{
             var arquivo;
 
@@ -256,10 +244,10 @@ const io = require('socket.io')(server);
             res.render('pages/post', {
                 post: {
                     materia: data.materia,
-                        titulo: data.titulo,
-                        conteudo: data.conteudo,
-                        limite: new Date((new Date(data.limite).setHours(new Date(data.limite).getHours() + 3))).toString().substr(0,21),
-                        anexos: arquivo
+                    titulo: data.titulo,
+                    conteudo: data.conteudo,
+                    limite: new Date((new Date(data.limite).setHours(new Date(data.limite).getHours() + 3))).toString().substr(0,21),
+                    anexos: arquivo
                 }
             });
         }).catch(err=>{
@@ -269,9 +257,7 @@ const io = require('socket.io')(server);
 
     app.post('/posts/:id', (req, res) => {
         Tarefa.findOne({
-            where: {
-                id: req.params.id
-            }
+            _id: req.params.id
         }).then(data=>{
             var file = data.anexos;
             var path = require('path');
@@ -309,9 +295,9 @@ const io = require('socket.io')(server);
 
     app.get('/chat/in', (req, res)=>{
         if(req.query.admin == 'true') {
-            User.findOne({where: {
-                id: req.user
-            }}).then(data=>{
+            User.findOne({
+                _id: req.user
+            }).then(data=>{
                 console.log(data.username);
                 
                 res.render('pages/chat', {

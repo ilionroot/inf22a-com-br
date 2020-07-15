@@ -1,17 +1,26 @@
-const db = require('./db');
+const mongoose = require('./db');
 
-const User = db.sequelize.define('users',{
+const UserSchema = new mongoose.Schema({
     username: {
-        type: db.Sequelize.STRING
+        type: String,
+        required: true
     },
     password: {
-        type: db.Sequelize.STRING
+        type: String,
+        required: true
     },
     email: {
-        type: db.Sequelize.STRING
+        type: String,
+        required: true
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now()
     }
-});
+})
 
-//User.sync({ force: true });
+const User = mongoose.model('User', UserSchema);
 
 module.exports = User;
+
+//User.sync({ force: true }); (MYSQL DB'S)

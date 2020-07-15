@@ -1,3 +1,13 @@
+::-webkit-scrollbar-track {
+    background-color: #F4F4F4;
+}
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-thumb {
+    background: #478AC7;
+}
+
 .post {
     background-color: snow;
     border: lightgray solid 0.5px;

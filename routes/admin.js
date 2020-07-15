@@ -10,6 +10,7 @@ const Op = sequelize.Op;
 const authenticationMiddleware = require('../middlewares/authMiddleware').auth;
 const Tarefa = require('../models/tarefa');
 const User = require('../models/user');
+const crypt = require('../crypto');
 const { lookup } = require('dns');
 
 router.use(express.static(path.join(__dirname, "public")));
@@ -36,7 +37,7 @@ router.get('/postar', (req, res) => {
     });
 })
 
-router.post('/postar', upload.single('fileSender'), (req, res) => {
+router.post('/postar', upload.single('fileSender'), async (req, res) => {
     var data = new Date(new Date(req.body.prazo) - new Date(req.body.prazo).getTimezoneOffset() * 60000);
     console.log(req.body.conteudo);
 
@@ -46,7 +47,7 @@ router.post('/postar', upload.single('fileSender'), (req, res) => {
         arquivo = req.file.filename;
     }
 
-    Tarefa.create({
+    await Tarefa.create({
         titulo: req.body.titulo,
         materia: req.body.materia,
         conteudo: req.body.conteudo,
@@ -63,7 +64,15 @@ router.post('/postar', upload.single('fileSender'), (req, res) => {
 });
 
 router.get('/', async (req, res)=>{
-    var qtdCards = await Tarefa.count({group: ["materia"]}).then(data=>{
+    var qtdCards = await Tarefa.aggregate([
+        {
+            $group: {
+                _id: "$materia",
+                count: { $sum: 1 }
+            }
+        }
+    ]).then(data=>{
+        console.log(data);
         res.render('pages/admin', {
             data: data,
             message: req.flash('success'),
@@ -107,12 +116,9 @@ router.get('/search/', async (req, res) => {
 });
 
 router.get('/materia/:materia', async (req, res)=>{
-    await Tarefa.findAll({
-        where: {
-            materia: req.params.materia
-        },
-        order: [['id', 'DESC']]
-    }).then(data=>{
+    await Tarefa.find({
+        materia: req.params.materia
+    }).sort( { _id: '-1' } ).then(data=>{
         const informations = {
             postDocuments: data.map(document=>{
                 return {
@@ -214,9 +220,9 @@ function ext(extensao) {
 }
 
 router.get('/edit/:id', (req, res) => {
-    Tarefa.findOne({where: {
-        id: req.params.id
-    }}).then(data=>{
+    Tarefa.findOne({
+        _id: req.params.id
+    }).then(data=>{
         var arquivo;
 
         if (data.anexos != null) {
@@ -266,15 +272,15 @@ router.post('/edit/:id', upload.single('fileSender'), (req, res) => {
         arquivo = req.file.filename;
     }
 
-    Tarefa.update({
-        titulo: req.body.titulo,
-        materia: req.body.materia,
-        limite: data,
-        conteudo: req.body.conteudo,
-        anexos: arquivo
-    }, {where: {
-        id: req.params.id
-    }}).then(()=>{
+    Tarefa.update({_id:req.params.id},{
+        $set: {
+            titulo: req.body.titulo,
+            materia: req.body.materia,
+            limite: data,
+            conteudo: req.body.conteudo,
+            anexos: arquivo
+        }
+    }).then(()=>{
         req.flash('success', 'Postagem editada com sucesso!');
         res.redirect('/admin');
     }).catch(err=>{
@@ -298,15 +304,13 @@ router.post('/register', (req, res) => {
 
     if(csenha === senha) {
         User.findOne({
-            where: {
-                email: email
-            }
+            email: email
         }).then(async result => {
             if(!result) {
                 var senhaBanco = await crypt.crypt(senha);
                 console.log(senhaBanco + " eu sou o Igor");
 
-                User.create({
+                await User.create({
                     username: usuario,
                     email: email,
                     password: senhaBanco
@@ -314,6 +318,7 @@ router.post('/register', (req, res) => {
                     req.flash('successuser', 'Usuário cadastrado com sucesso!');
                     res.redirect('/login');
                 }).catch(err=>{
+                    console.log(err);
                     req.flash('error', 'Erro ao cadastrar usuário!');
                     res.redirect('/admin/register');
                 })
@@ -322,6 +327,7 @@ router.post('/register', (req, res) => {
                 res.redirect('/admin/register');
             }
         }).catch(err => {
+            console.log(err);
             req.flash('error', 'Erro ao cadastrar usuário!');
             res.redirect('/admin/register');
         })
