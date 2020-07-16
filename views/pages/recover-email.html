@@ -1,0 +1,105 @@
+<br>
+
+<style>
+    .form {
+        margin: 0 auto;
+        height: auto;
+    }
+
+    .form input[type=email] {
+        width: 50%;
+        padding: 20px;
+        font-size: 25px;
+        margin: 15px;
+    }
+
+    .form div {
+        position: relative;
+    }
+
+    .form h1 {
+        margin-left: 15px;
+        margin-bottom: 50px;
+    }
+
+    .form div label {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        font-size: 18px;
+        pointer-events: none;
+        color: #4B95D5;
+        -webkit-transition: .25s;
+        -ms-transition: .25s;
+        -moz-transition: .25s;
+        -o-transition: .25s;
+        transition: .25s;
+    }
+
+    .form div input:not([type=submit]):focus,
+    .form div input:not([type=submit]):valid {
+        
+        color: black;
+    }
+
+    .form div input:focus ~ label,
+    .form div input:valid ~ label {
+        top: -5px;
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    .form div input {
+        -moz-transition: .2s;
+        -o-transition: .2s;
+        -ms-transition: .2s;
+        -webkit-transition: .2s;
+        transition: .2s;
+    }
+
+    .form div input:focus,
+    .form div input:valid {
+        border-bottom: 2px solid #4B95D5;
+    }
+
+    @media screen and (min-width: 768px) {
+        .message-success {
+            margin-top: -10px;
+        }
+    }
+
+    @media screen and (max-width: 768px) {
+        .message-success {
+            margin-top: 20px;
+        }
+    }
+</style>
+
+{{#if error}}
+    <div class="message-success" style="background-color: rgb(217,84,79);">
+        {{error}}
+    </div>
+{{/if}}
+
+{{#if success}}
+    <div class="message-success" style="background-color: rgb(93,184,89);">
+        {{success}}
+    </div>
+{{/if}}
+
+{{#if doesnt}}
+    <div class="message-success" style="background-color: rgb(239,173,77);">
+        {{doesnt}}
+    </div>
+{{/if}}
+
+<form method="POST" class="form">
+    <h1>Digite seu e-mail para confirmarmos que você realmente é você:</h1>
+    
+    <div>
+        <input name="email" type="email" />
+        <label for="email">E-mail</label>
+    </div>
+
+    <input type="submit" value="Enviar e-mail" />
+</form>

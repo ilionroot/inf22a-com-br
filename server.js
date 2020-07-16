@@ -9,6 +9,7 @@ const handleBars = require('express-handlebars');
 const HandleBars = require('handlebars');
 const path = require('path');
 const bodyParser = require('body-parser');
+const nodemailer = require('nodemailer');
 
 const flush = require('connect-flash');
 const cookieParser = require('cookie-parser');
@@ -390,6 +391,133 @@ const io = require('socket.io')(server);
     app.get('/wikipedia', (req, res) => {
         res.header("Access-Control-Allow-Headers", "x-requested-with, x-requested-by");
         res.sendFile(__dirname + '/gerador/wikipedia.html');
+    });
+
+    app.get('/recover-password', async (req, res) => {
+        res.render('pages/recover-email', {
+            doesnt: req.flash('already'),
+            success: req.flash('successuser'),
+            error: req.flash('error')
+        });
+    });
+
+    const hbs = require('nodemailer-express-handlebars');
+    const crypto = require('crypto');
+
+    app.post('/recover-password', async (req, res) => {
+        await User.findOne({ email: req.body.email }).then(async user=>{
+            if (!user) { req.flash('already', 'E-mail não cadastrado!'); return res.redirect('/recover-password') }
+            
+            const token = await crypto.randomBytes(20).toString('hex');
+            const now = new Date();
+            now.setHours(now.getHours() + 1);
+
+            await User.updateOne({ _id: user.id }, {
+                $set: {
+                    passwordResetToken: token,
+                    passwordResetExpires: now
+                }
+            });
+
+            const transporter = nodemailer.createTransport({
+                host: "smtp.gmail.com",
+                port: 587,
+                secure: false,
+                auth: {
+                    user: "noreply.inf22a@gmail.com",
+                    pass: "marina2207"
+                },
+                tls: { rejectUnauthorized: false }
+            });
+    
+            transporter.use('compile', hbs({
+                viewEngine: {
+                    extName: '.html',
+                    partialsDir: './mail/',
+                    layoutsDir: './mail/',
+                },
+                viewPath: './mail/',
+                extName: '.html'
+            }))
+    
+            const mailOptions = {
+                from: 'noreply.inf22a@gmail.com',
+                to: user.email,
+                template: 'email-recover-password',
+                context: { token, nickname: user.username },
+                subject: 'Recuperação de senha - INF22A',
+            };
+
+            transporter.sendMail(mailOptions, function(err, info){
+                if (err) {
+                    console.log(err);
+                    req.flash('error', 'Não foi possível enviar o seu e-mail: ' + err);
+                    res.redirect('/recover-password');
+                } else {
+                    console.log('Email enviado: ' + info.response);
+                    req.flash('successuser', 'E-mail enviado com sucesso! (Verifique a caixa de SPAM e a Lixeira)');
+                    res.redirect('/recover-password');
+                }
+            });
+        }).catch(err=>{
+            req.flash('error', 'Não foi possível enviar o seu e-mail: ' + err);
+            res.redirect('/recover-password');
+        });
+    });
+    
+    app.get('/reset-password/:token', async (req, res) => {
+        await User.find({ passwordResetToken: req.params.token }).then(user=>{
+            res.render('pages/reset-password', {
+                nickname: user.username,
+                error: req.flash('error'),
+                success: req.flash('successuser'),
+                dmatch: req.flash('already'),
+            });
+        }).catch(err=>{ console.log(err); return res.status(400).send({ error: 'Não foi possível carregar a página!' }); });
+    });
+
+    app.post('/reset-password/:token', async (req, res) => {
+        const token = req.params.token;
+        const { password, cpassword } = req.body;
+
+        try {
+            if (!password === cpassword) {
+                req.flash('already', 'As senhas não coincidem!');
+                return res.redirect('/reset-password/' + token);
+            }
+
+            const user = await User.findOne({ passwordResetToken: token })
+                .select('+passwordResetToken passwordResetExpires');
+
+            if (!user) {
+                req.flash('error', 'Esse token não pertence a ninguém, espertinho!');
+                return res.redirect('/login');
+            }
+
+            if (token !== user.passwordResetToken) {
+                req.flash('error', 'Esse token não pertence a ninguém, espertinho!');
+                return res.redirect('/login');
+            }
+
+            const now = new Date();
+
+            if (now > user.passwordResetExpires) {
+                req.flash('error', 'Token expirado!');
+                return res.redirect('/login');;
+            }
+
+            user.password = crypt.crypt(password);
+            user.passwordResetToken = undefined;
+            user.passwordResetExpires = undefined;
+
+            await user.save();
+
+            req.flash('successuser', 'Sua senha foi alterada com sucesso!');
+            res.redirect('/login');
+        } catch (err) {
+            req.flash('error', 'Não foi possível alterar a sua senha: ' + err);
+            res.redirect('/login');
+        }
     });
 
     app.use('/admin', require('./routes/admin'));

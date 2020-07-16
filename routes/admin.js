@@ -259,7 +259,7 @@ router.get('/edit/:id', (req, res) => {
         console.log(data.limite);
     }).catch(err=>{
         req.flash('error', 'Falha ao carregar página: ' + err);
-        res.redirect('/admin/edit/' + req.params.id);
+        res.redirect('/admin');
     })
 })
 

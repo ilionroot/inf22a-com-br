@@ -1,3 +1,9 @@
+body {
+    margin-top: 9vh;
+    font-family: 'Comfortaa', cursive;
+    
+}
+
 ::-webkit-scrollbar-track {
     background-color: #F4F4F4;
 }
@@ -235,7 +241,7 @@ body small {
     width: 200px;
     height: 90px;
 
-    margin: 35.8px;
+    margin: 30px;
 
     display: inline-table;
 
