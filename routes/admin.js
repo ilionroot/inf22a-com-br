@@ -337,4 +337,8 @@ router.post('/register', (req, res) => {
     }
 });
 
+router.get('/contatar-professores', async (req, res) => {
+    res.render('pages/contatar-professores');
+});
+
 module.exports = router;

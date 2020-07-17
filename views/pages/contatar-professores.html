@@ -1,0 +1,50 @@
+<link rel="stylesheet" href="/css/style2.css" />
+
+<span id="backB" class="scrollButton" style="left: 0; background-image: url('/img/hide.ico');"></span>
+
+<div class="scrollTop">
+    <h3>Matemática</h3>
+    <h3>Portugues</h3>
+    <h3>Historia</h3>
+    <h3>Geografia</h3>
+    <h3>Linguagem de programação</h3>
+    <h3>Literatura</h3>
+    <h3>Empreendedorismo</h3>
+    <h3>Fisica</h3>
+    <h3>Matemática</h3>
+    <h3>Portugues</h3>
+    <h3>Historia</h3>
+    <h3>Geografia</h3>
+    <h3>Linguagem de programação</h3>
+    <h3>Literatura</h3>
+    <h3>Empreendedorismo</h3>
+    <h3>Fisica</h3>
+</div>
+
+<span id="frontB" class="scrollButton" style="right: 0; background-image: url('/img/hide.ico'); transform: rotate(180deg);"></span>
+
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><h1 style="color: white;"> eae ADM</h1>
+<script>
+    $(document).ready(()=>{
+        $('.scrollTop').animate({
+            right: '-100%'
+        })
+    })
+
+    $('.scrollButton').click(async function() {
+        if (this.id == 'backB') {
+            if ($('.scrollTop').offset().left < 0) {
+                await $('.scrollTop').animate({
+                    right: '-=200'
+                });
+            }
+        } else if (this.id == 'frontB') {
+            if (($(window).width() - ($('.scrollTop').offset().left + $('.scrollTop').outerWidth())) < 0) {
+                await $('.scrollTop').animate({
+                    right: '+=200'
+                });
+            }
+        }
+    });
+</script>

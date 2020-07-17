@@ -1,0 +1,64 @@
+::-webkit-scrollbar {
+    height: 10px;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.scrollTop {
+    position: absolute;
+    top: 9vh;
+
+    display: flex;
+    flex-direction: row;
+
+    align-items: center;
+    justify-content: center;
+
+    background-color: snow;
+    width: auto;
+    height: 85px;
+}
+
+.scrollTop h3 {
+    margin: 0 25px;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.scrollTop h3:hover {
+    margin: 0 25px;
+    cursor: pointer;
+    transform: scale(1.25);
+}
+
+.scrollButton {
+    background-color: rgba(128,128,128,.1);
+    cursor: pointer;
+    width: 10%;
+    height: 85px;
+
+    position: absolute;
+    top: 9vh;
+    z-index: 1;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 30px;
+
+    transition: .2s ease;
+
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.scrollButton:hover {
+    background-color: rgba(128,128,128,.5);
+}
