@@ -21,6 +21,7 @@
     "express-session": "^1.17.1",
     "gsap": "^3.3.4",
     "handlebars": "^4.7.6",
+    "jsonfile": "^6.0.1",
     "mongoose": "^5.9.25",
     "multer": "^1.4.2",
     "mysql2": "^2.1.0",
@@ -28,7 +29,10 @@
     "nodemailer-express-handlebars": "^4.0.0",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
-    "socket.io": "^2.3.0"
+    "simple-youtube-api": "^5.2.1",
+    "socket.io": "^2.3.0",
+    "util": "^0.12.3",
+    "youtube-audio-stream": "^0.3.6"
   },
   "repository": "https://github.com/ilionroot/inf22a-com-br.git"
 }

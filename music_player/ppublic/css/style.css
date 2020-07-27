@@ -1,0 +1,225 @@
+*, html {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    font-family: 'Roboto', sans-serif;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #F4F4F4;
+}
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-thumb {
+    background: #F7931E;
+}
+
+.music-card {
+    background-color: snow;
+    padding: 15px;
+    width: 40%;
+    height: 400px;
+    
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px .1px rgba(0,0,0,.16666);
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.music-card audio {
+    width: 100%;
+    margin: 5px;
+    outline: none;
+}
+
+.music-image {
+    width: 100%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    height: 80%;
+    margin: 15px;
+}
+
+.add-button {
+    background-color: lightgray;
+    width: 50px;
+    height: 50px;
+
+    border-radius: 50%;
+
+    position: absolute;
+    left: 33%;
+
+    transition: .2s ease;
+    cursor: pointer;
+    transform: scale(0.75);
+    z-index: 99;
+}
+
+.add-button:hover {
+    opacity: .5;
+    transform: scale(1);
+}
+
+.add-button1 {
+    background-color: lightgray;
+    width: 50px;
+    height: 50px;
+
+    border-radius: 50%;
+
+    position: absolute;
+    left: 62%;
+
+    transition: .2s ease;
+    cursor: pointer;
+    transform: scale(0.75);
+    z-index: 99;
+}
+
+.add-button1:hover {
+    opacity: .5;
+    transform: scale(1);
+}
+
+.add-div {
+    background-color: snow;
+    padding: 15px;
+    width: 40%;
+    height: 400px;
+
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px .1px rgba(0,0,0,.25);
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    position: absolute;
+    z-index: 0;
+    /*opacity: 0;*/
+}
+
+.add-div input[type=text] {
+    width: 50%;
+    padding: 10px;
+    margin: 15px;
+    font-size: 20px;
+    background-color: transparent;
+    border-bottom: 1px solid #F7931E;
+    outline: none;
+}
+
+.add-div input[type=submit] {
+    height: 40px;
+    border: 1px solid rgb(247, 147, 30);
+    background-color: transparent;
+    padding: 10px;
+    cursor: pointer;
+
+    transition: .3s ease;
+}
+
+.add-div input[type=submit]:hover {
+    background-color: #F7931E;
+    color: white;
+}
+
+.playlist {
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: flex-start;
+    max-height: 300px;
+    margin: 15px;
+    width: 75%;
+
+    background-color: rgba(211, 211, 211,.4);
+    border-radius: 15px;
+
+    overflow-y: auto;
+}
+
+.song {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    
+    align-items: center;
+    padding: 30px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.song:hover {
+    background-color: rgba(211, 211, 211,.5);
+}
+
+.song a {
+    text-decoration: none;
+    color: black;
+}
+
+@keyframes windowChange1 {
+    0% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(-300px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+@keyframes windowChange2 {
+    0% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(300px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .music-card {
+        width: 90%;
+    }
+
+    .add-div {
+        width: 90%;
+    }
+
+    .add-button {
+        left: 15%;
+    }
+
+    .add-button1 {
+        left: 78%;
+    }
+}

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Music Player</title>
+</head>
+<body>
+    <span class="add-button"></span>
+    <span class="add-button" name="seePlaylist"></span>
+
+    <div class="music-card">
+        <h1 id="titulo"></h1>
+        <h3 id="autor"></h3>
+        <div class="music-image"></div>
+        <audio autoplay src="/player/audio" id="player" controls preload="auto">
+            Seu navegador não suporta HTML5
+        </audio>
+    </div>
+
+    <div class="add-div" id="add">
+        <h1>Adicionar música</h1>
+        <form id="ytScraping" method="POST" style="display: flex; flex-direction: row; align-items: center; justify-content: center;">
+            <input type="text" id="pesquisa" name="pesquisa" placeholder="Vídeo Youtube..." />
+            <input type="submit" value="Pesquisar" />
+        </form>
+    </div>
+
+    <div class="add-div" id="playlist">
+        <h1>Playlist</h1>
+        <div class="playlist">
+            {{#each musica}}
+                <div class="song">
+                    <a class="link" id="{{this.id}}">{{this.title}}</a>
+                </div>
+            {{/each}}
+        </div>
+    </div>
+
+    <span class="add-button1"></span>
+    <span class="add-button1" name="addMusic"></span>
+</body>
+</html>

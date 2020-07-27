@@ -37,8 +37,6 @@ router.get('/postar', (req, res) => {
 
 router.post('/postar', upload.single('fileSender'), async (req, res) => {
     var data = new Date(new Date(req.body.prazo) - new Date(req.body.prazo).getTimezoneOffset() * 60000);
-    console.log(req.body.conteudo);
-
     var arquivo;
     
     if(req.file != null && req.file != undefined) {
@@ -53,8 +51,6 @@ router.post('/postar', upload.single('fileSender'), async (req, res) => {
         limite: data
     }).then(()=>{
         req.flash('success', 'Postagem realizada com sucesso!');
-        console.log("Arquivo: " + arquivo);
-        console.log("Data: " + data);
         res.redirect('/admin');
     }).catch(err=>{
         req.flash('error', 'Erro ao realizar postagem!');
@@ -70,14 +66,11 @@ router.get('/', async (req, res)=>{
             }
         }
     ]).then(data=>{
-        console.log(data);
         res.render('pages/admin', {
             data: data,
             message: req.flash('success'),
             results: false,
         });
-
-        console.log(data);
     }).catch(err=>{
         throw err;
     })
@@ -94,8 +87,6 @@ router.get('/search/', async (req, res) => {
             }
         }
     }).then(data=>{
-        console.log(data);
-
         const information = {
             postInfos: data.map(document => {
               return {
@@ -133,8 +124,6 @@ router.get('/materia/:materia', async (req, res)=>{
         res.render('pages/materia', {
             post: informations.postDocuments
         });
-
-        console.log(data.id);
     }).catch(err=>{
         throw err;
     })
@@ -243,8 +232,6 @@ router.get('/edit/:id', (req, res) => {
             }
         }
 
-        console.log(arquivo);
-
         res.render('pages/edit', {
             anexos: arquivo,
             materia: data.materia,
@@ -253,8 +240,6 @@ router.get('/edit/:id', (req, res) => {
             limite: (new Date(data.limite).toISOString().slice(0, 19)),
             error: req.flash('error')
         });
-
-        console.log(data.limite);
     }).catch(err=>{
         req.flash('error', 'Falha ao carregar página: ' + err);
         res.redirect('/admin');
@@ -306,7 +291,6 @@ router.post('/register', (req, res) => {
         }).then(async result => {
             if(!result) {
                 var senhaBanco = await crypt.crypt(senha);
-                console.log(senhaBanco + " eu sou o Igor");
 
                 await User.create({
                     username: usuario,

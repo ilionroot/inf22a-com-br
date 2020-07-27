@@ -68,9 +68,6 @@ const io = require('socket.io')(server);
         usernameField: 'email',
         passwordField: 'senha'
     }, async function(username,password,done) {
-        console.log(username);
-        console.log('isso eh um callback');
-
         await User.findOne( { email: username } ).then(async user=>{
             if ( !user ) {
                 return done(null, false, { message: 'Incorrect username!' });
@@ -212,9 +209,8 @@ const io = require('socket.io')(server);
     });
 
     app.get('/posts/:id', async (req, res) => {
-        var idPost = req.params.id;
-        console.log(idPost);
-
+				var idPost = req.params.id;
+				
         await Tarefa.findOne({ // Um problema resolvido
             _id: idPost
         }).then(data=>{
@@ -239,8 +235,6 @@ const io = require('socket.io')(server);
                     arquivo = ext(extensao);
                 }
             }
-
-            console.log(arquivo);
 
             res.render('pages/post', {
                 post: {
@@ -288,9 +282,8 @@ const io = require('socket.io')(server);
     });
 
     app.post('/set-username', (req, res)=>{
-        tempUser = req.body.username;
-        console.log(tempUser);
-
+				tempUser = req.body.username;
+				
         res.redirect('/chat/in?admin=false');
     });
 
@@ -299,8 +292,6 @@ const io = require('socket.io')(server);
             User.findOne({
                 _id: req.user
             }).then(data=>{
-                console.log(data.username);
-                
                 res.render('pages/chat', {
                     user: data.username
                 });
@@ -317,8 +308,6 @@ const io = require('socket.io')(server);
     var msgs = [];
 
     io.on('connection', socket=>{
-        console.log('Usuário: ' + socket.id + ' conectou!');
-
         socket.join('public');
         io.sockets.in('public').emit('lastMessages', msgs);
 
@@ -328,7 +317,6 @@ const io = require('socket.io')(server);
         });
 
         socket.on('private', (msg)=>{
-            console.log(msg.ademe + " lidia");
             io.sockets.in(msg.ademe).emit('receivePrivateMessage', msg);
         });
 
@@ -365,7 +353,6 @@ const io = require('socket.io')(server);
         });
 
         socket.on('disconnect', function() {
-            console.log('Usuário desconectado: ' + socket.id);
         });
     });
 
@@ -438,7 +425,7 @@ const io = require('socket.io')(server);
                 },
                 viewPath: './mail/',
                 extName: '.html'
-            }))
+            }));
     
             const mailOptions = {
                 from: 'noreply.inf22a@gmail.com',
@@ -454,7 +441,6 @@ const io = require('socket.io')(server);
                     req.flash('error', 'Não foi possível enviar o seu e-mail: ' + err);
                     res.redirect('/recover-password');
                 } else {
-                    console.log('Email enviado: ' + info.response);
                     req.flash('successuser', 'E-mail enviado com sucesso! (Verifique a caixa de SPAM e a Lixeira)');
                     res.redirect('/recover-password');
                 }
@@ -518,9 +504,14 @@ const io = require('socket.io')(server);
             req.flash('error', 'Não foi possível alterar a sua senha: ' + err);
             res.redirect('/login');
         }
-    });
+		});
 
-    app.use('/admin', require('./routes/admin'));
+		app.use('/admin', require('./routes/admin'));
+		app.use('/player', require('./music_player/player')(server));
+
+    app.use((req, res, next) => {
+        res.status(404).render('pages/404');
+    })
 
 server.listen(process.env.PORT || 3000, ()=>{
     console.log('Server rodando na porta: 3000');
