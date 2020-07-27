@@ -13,12 +13,12 @@
 
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb+srv://igoncio:8LZ4gyRi4icrS1d1@inf22a.zilou.mongodb.net/inf22a?retryWrites=true&w=majority', { useNewUrlParser: true }) //, useUnifiedTopology: true, useCreateIndex: true
+mongoose.connect('mongodb://igoncio:d7i6rqeZ8D4oqt5q@inf22a-shard-00-00.zilou.mongodb.net:27017,inf22a-shard-00-01.zilou.mongodb.net:27017,inf22a-shard-00-02.zilou.mongodb.net:27017/inf22a?ssl=true&replicaSet=atlas-o4ztp8-shard-0&authSource=admin&retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true })
     .then(()=>{
         console.log('Conectado com sucesso!');
     })
     .catch(e=>{
-        console.log('Erro: ' + e);
+        throw e;
     });
 mongoose.Promise = global.Promise;
 
