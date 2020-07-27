@@ -464,7 +464,7 @@ const io = require('socket.io')(server);
             res.redirect('/recover-password');
         });
     });
-    
+		
     app.get('/reset-password/:token', async (req, res) => {
         await User.find({ passwordResetToken: req.params.token }).then(user=>{
             res.render('pages/reset-password', {

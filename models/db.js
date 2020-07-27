@@ -13,7 +13,7 @@
 
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb+srv://ilion:marina2207@inf22a.zilou.mongodb.net/inf22a?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
+mongoose.connect('mongodb+srv://igoncio:8LZ4gyRi4icrS1d1@inf22a.zilou.mongodb.net/inf22a?retryWrites=true&w=majority', { useNewUrlParser: true }) //, useUnifiedTopology: true, useCreateIndex: true
     .then(()=>{
         console.log('Conectado com sucesso!');
     })

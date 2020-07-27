@@ -4,8 +4,6 @@ var router = express.Router();
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
-const sequelize = require('sequelize');
-const Op = sequelize.Op;
 
 const authenticationMiddleware = require('../middlewares/authMiddleware').auth;
 const Tarefa = require('../models/tarefa');
