@@ -155,16 +155,16 @@ module.exports = (server) => {
 					// 'Content-Thumb': contentThumb
 				});
 		
-				io = require('socket.io')(server);
+				// io = require('socket.io')(server);
 		
-				await io.on('connection', async socket => {
-					socket.emit('load', {
-						ans: true,
-						titulo: content,
-						autor: contentAutor,
-						thumb: contentThumb
-					});
-				});
+				// await io.on('connection', async socket => {
+				// 	socket.emit('load', {
+				// 		ans: true,
+				// 		titulo: content,
+				// 		autor: contentAutor,
+				// 		thumb: contentThumb
+				// 	});
+				// });
 		
 				stream.on('error', (streamErr) => res.end(streamErr));
 				stream.on('end', () => { console.log('Stream terminou!') });
