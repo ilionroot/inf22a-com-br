@@ -109,11 +109,14 @@ module.exports = (server) => {
 	});
 
 	router.get('/audio', async (req, res) => {
+		if (!mscs) {
+			mscs = await Playlist.find();
+		}
+
 		if (!req.query.id) {
 			try {
 				let index = Math.floor(Math.random() * mscs.length);
 				let file = mscs[index].title;
-				console.log(title);
 		
 				// await fs.createReadStream(filePath);
 		
