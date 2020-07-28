@@ -22,6 +22,7 @@ $(document).ready(async () => {
 	
 		document.getElementById('player').onended = async function () {
 			socket.close();
+			socket.removeAllListeners();
 			socket.open();
 			document.getElementById('player').src = '/player/audio';
 			
@@ -48,6 +49,7 @@ $(document).ready(async () => {
 
 	$('.song').click(function() {
 		socket.close();
+		socket.removeAllListeners();
 		socket.open();
 		document.getElementById('player').src = '/player/audio?id=' + this.id;
 	});
