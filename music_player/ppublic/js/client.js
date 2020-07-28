@@ -21,6 +21,7 @@ $(document).ready(async () => {
 		})
 	
 		document.getElementById('player').onended = async function () {
+			console.log('entrou ja?');
 			socket.close();
 			socket.removeAllListeners();
 			socket.open();
