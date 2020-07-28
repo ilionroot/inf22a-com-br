@@ -7,11 +7,13 @@ module.exports = (server) => {
 	const path = require('path');
 	const Youtube = require('simple-youtube-api');
 	const youtube = new Youtube(require('./configs/configs').googleAPI);
-	const jsonFile = require('jsonfile');
 	const fs = require('fs');
 	const getStat = require('util').promisify(fs.stat);
 	let io = require('socket.io')(server);
 	const youtubeStream = require('youtube-audio-stream');
+	const Playlist = require('../models/playlist');
+
+	io.sockets.setMaxListeners(5);
 
 	router.use(bodyParser.urlencoded({ extended: true }));
 	router.use(bodyParser.json());
@@ -22,7 +24,7 @@ module.exports = (server) => {
 
 	const middle = async (req, res, next) => {
 		try {
-			mscs = await jsonFile.readFileSync('./music_player/playlist.json');
+			mscs = await Playlist.find();
 			next();
 		} catch (error) {
 			next();
@@ -31,10 +33,27 @@ module.exports = (server) => {
 
 	router.get('/', middle, async (req, res) => {
 		if (mscs) {
-			if (mscs.mscs.length === 0) { return res.render('pages/hp'); }
+			if (mscs.length == 0) {
+				io.on('connection', socket => {
+					socket.emit('load', {
+						ans: true
+					});
+				});
+				return res.render('pages/hp', { layout: 'mp', });
+			}
+
+			const infos = {
+				playlistInfo: await mscs.map(item => {
+					return {
+						id: item.id,
+						title: item.title
+					}
+				})
+			}
+
 			res.render('pages/player', {
                 layout: 'mp',
-				musica: mscs.mscs
+				musica: infos.playlistInfo,
 			});
 
 			io.on('connection', socket => {
@@ -58,58 +77,46 @@ module.exports = (server) => {
 	});
 
 	router.post('/', async (req, res) => {
-		let { pesquisa } = req.body;
-		console.log(pesquisa);
+		if (req.user) {
+			let { pesquisa } = req.body;
+			console.log(pesquisa);
 
-		await youtube.searchVideos(pesquisa, 1).then(async video => {
-			await fs.exists('./music_player/playlist.json', async exists => {
-				if (!exists) {
-					try {
-						console.log('Adicionando...');
-						await jsonFile.writeFile('./music_player/playlist.json', {
-							mscs: [
-								{
-									"id": video[0].id,
-									"title": video[0].title + '.mp3',
-									"autor": video[0].raw.snippet.channelTitle,
-									"thumb": video[0].thumbnails.high.url,
-								}
-							]
-						}, (err, escrito) => {
-							res.render('pages/player', {layout: 'mp'});
+			await youtube.searchVideos(pesquisa, 1).then(async video => {
+				console.log('Adicionando...');
+				
+				Playlist.findOne({ id: video[0].id }).then(teste => {
+					if (!teste) {
+						Playlist.create({
+							id: video[0].id,
+							title: video[0].title,
+							autor: video[0].raw.snippet.channelTitle,
+							thumb: video[0].thumbnails.high.url,
+						}).then(() => {
+							console.log(`Música ${video[0].title} adicionada com sucesso!`);
+							res.redirect('/player');
 						});
-					} catch (error) {
-						console.log('FOI AQUI!: ' + error);
+					} else {
+						res.send('Música existente!');
 					}
-				} else {
-					console.log('Adicionando...');
-					console.log('Música ' + video[0].title + ' adicionada à biblioteca!');
-						let musicas = await jsonFile.readFileSync('./music_player/playlist.json');
-						musicas.mscs.push({
-							"id": video[0].id,
-							"title": video[0].title + '.mp3',
-							"autor": video[0].raw.snippet.channelTitle,
-							"thumb": video[0].thumbnails.high.url,
-						});
-						await jsonFile.writeFile('./music_player/playlist.json', musicas);
-						res.render('pages/player', {layout: 'mp'});
-				}
-			});
-		}).catch(err => {
-			console.log('Erro personalizado: ' + err);
-			res.status(404);
-		})
+				});
+			}).catch(err => {
+				console.log('Erro personalizado: ' + err);
+				res.status(404);
+			})
+		} else {
+			res.redirect('/login?fail=true');
+		}
 	});
 
 	router.get('/audio', async (req, res) => {
 		if (mscs == undefined) {
-			mscs = await jsonFile.readFileSync('./music_player/playlist.json');
+			mscs = await Playlist.find();
 		}
 
 		if (!req.query.id) {
 			try {
-				let index = Math.floor(Math.random() * mscs.mscs.length);
-				let file = mscs.mscs[index].title;
+				let index = Math.floor(Math.random() * mscs.length);
+				let file = mscs[index].title;
 		
 				// await fs.createReadStream(filePath);
 		
@@ -117,11 +124,11 @@ module.exports = (server) => {
 				let contentThumb = '';
 				let contentTitle = () => {
 					try {
-						for(let index in mscs.mscs) {
-							if (mscs.mscs[index].title == file) {
-								contentAutor = mscs.mscs[index].autor;
-								contentThumb = mscs.mscs[index].thumb;
-								return mscs.mscs[index].title.split('.')[0];
+						for(let index in mscs) {
+							if (mscs[index].title == file) {
+								contentAutor = mscs[index].autor;
+								contentThumb = mscs[index].thumb;
+								return mscs[index].title.split('.')[0];
 							}
 						}
 					} catch (error) {
@@ -130,9 +137,9 @@ module.exports = (server) => {
 				}
 		
 				let stream = youtubeStream('http://www.youtube.com/embed/' + (await function() {
-					for (let video in mscs.mscs) {
-						if (mscs.mscs[video].title == file) {
-							return mscs.mscs[video].id;
+					for (let video in mscs) {
+						if (mscs[video].title == file) {
+							return mscs[video].id;
 						}
 					}
 				})());
@@ -166,24 +173,24 @@ module.exports = (server) => {
 			}
 		} else {
 			const choosed = await (() => {
-				for (let video in mscs.mscs) {
-					if (mscs.mscs[video].id == req.query.id) {
+				for (let video in mscs) {
+					if (mscs[video].id == req.query.id) {
 						return video;
 					}
 				}
 			})();
 
-			let file = mscs.mscs[choosed].title;
+			let file = mscs[choosed].title;
 
 			let contentAutor = '';
 			let contentThumb = '';
 			let contentTitle = () => {
 				try {
-					for(let index in mscs.mscs) {
-						if (mscs.mscs[index].title == file) {
-							contentAutor = mscs.mscs[index].autor;
-							contentThumb = mscs.mscs[index].thumb;
-							return mscs.mscs[index].title.split('.')[0];
+					for(let index in mscs) {
+						if (mscs[index].title == file) {
+							contentAutor = mscs[index].autor;
+							contentThumb = mscs[index].thumb;
+							return mscs[index].title.split('.')[0];
 						}
 					}
 				} catch (error) {
@@ -192,9 +199,9 @@ module.exports = (server) => {
 			}
 
 			let stream = youtubeStream('http://www.youtube.com/embed/' + (await function() {
-				for (let video in mscs.mscs) {
-					if (mscs.mscs[video].title == file) {
-						return mscs.mscs[video].id;
+				for (let video in mscs) {
+					if (mscs[video].title == file) {
+						return mscs[video].id;
 					}
 				}
 			})());
@@ -226,5 +233,5 @@ module.exports = (server) => {
 		}
     })
 
-    return router;
+	return router;
 }

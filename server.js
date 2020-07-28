@@ -23,7 +23,7 @@ const io = require('socket.io')(server);
 // Passport e Sessão
     app.use(cookieParser());
     app.use(flush());
-    app.use(session({ 
+    app.use(session({
         cookie: {
            maxAge: 1000 * 60 * 60 *  2,
         },

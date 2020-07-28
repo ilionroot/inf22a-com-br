@@ -23,7 +23,7 @@ $(document).ready(async () => {
 		document.getElementById('player').onended = async function () {
 			socket.close();
 			socket.open();
-			document.getElementById('player').src = '/audio';
+			document.getElementById('player').src = '/player/audio';
 			
 			// this.src = '/audio';
 	
@@ -46,9 +46,9 @@ $(document).ready(async () => {
 		} catch (err) {
 	}
 
-	$('.link').click(function() {
+	$('.song').click(function() {
 		socket.close();
 		socket.open();
-		document.getElementById('player').src = '/audio?id=' + this.id;
+		document.getElementById('player').src = '/player/audio?id=' + this.id;
 	});
 });

@@ -8,8 +8,11 @@ const multer = require('multer');
 const authenticationMiddleware = require('../middlewares/authMiddleware').auth;
 const Tarefa = require('../models/tarefa');
 const User = require('../models/user');
+const Playlist = require('../models/playlist');
 const crypt = require('../crypto');
-const { lookup } = require('dns');
+
+const Youtube = require('simple-youtube-api');
+const youtube = new Youtube(require('../music_player/configs/configs').googleAPI);
 
 router.use(express.static(path.join(__dirname, "public")));
 router.use(authenticationMiddleware);
@@ -321,6 +324,68 @@ router.post('/register', (req, res) => {
 
 router.get('/contatar-professores', async (req, res) => {
     res.render('pages/contatar-professores');
+});
+
+router.get('/editar-playlist', async (req, res) => {
+    const playlist = await Playlist.find();
+
+    const infos = {
+        playlistInfos: await playlist.map(item => {
+            return {
+                id: item.id,
+                title: item.title,
+                autor: item.autor
+            }
+        })
+    }
+
+    res.render('pages/editar-playlist', {
+        musica: infos.playlistInfos,
+        message: req.flash('success'),
+        error: req.flash('error'),
+        already: req.flash('already')
+    });
+});
+
+router.post('/editar-playlist', async(req, res) => {
+    const { id } = req.body;
+
+    if (!id) {
+        const { searchBar } = req.body;
+
+        await youtube.searchVideos(searchBar, 1).then(async video => {
+            console.log('Adicionando...');
+
+            Playlist.findOne({ id: video[0].id }).then(teste => {
+                if (!teste) {
+                    Playlist.create({
+                        id: video[0].id,
+                        title: video[0].title,
+                        autor: video[0].raw.snippet.channelTitle,
+                        thumb: video[0].thumbnails.high.url,
+                    }).then(() => {
+                        console.log(`Música "${video[0].title}" adicionada com sucesso!`);
+                        req.flash('success', 'Música adicionada com sucesso!');
+                        return res.redirect('/admin/editar-playlist');
+                    });
+                } else {
+                    req.flash('already', 'Música existente!');
+                    return res.redirect('/admin/editar-playlist');
+                }
+            });
+        }).catch(err => {
+            req.flash('error', `Erro: ${err}`);
+            return res.redirect('/admin/editar-playlist');
+        })
+    } else {
+        await Playlist.deleteOne({ id }).then(() => {
+            req.flash('success', 'Música removida com sucesso!');
+            res.redirect('/admin/editar-playlist');
+        }).catch(err => {
+            req.flash('error', `Erro: ${err}`);
+            res.redirect('/admin/editar-playlist');
+        })
+    }
 });
 
 module.exports = router;
