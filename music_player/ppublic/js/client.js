@@ -20,36 +20,35 @@ $(document).ready(async () => {
 			}
 		})
 	
-		document.getElementById('player').onended = async function () {
-			socket.close();
-			socket.removeAllListeners();
-			socket.open();
-			document.getElementById('player').src = '/player/audio';
+		// document.getElementById('player').onended = async function () {
+		// 	socket.close();
+		// 	socket.open();
+		// 	document.getElementById('player').src = '/player/audio';
 			
-			// this.src = '/audio';
+		// 	// this.src = '/audio';
 	
-			// if (typeof mscs[i] != 'undefined') {
-			// 		this.src = mscs[i].file;
-			// 		$('#titulo').text(mscs[i].title);
-			// 		$('#autor').text(mscs[i].autor);
-			// 		$('.music-image').css('background-image', 'url(' + mscs[i].thumb + ')');
-			// 		this.autoplay = true;
-			// 		i++;
-			// } else {
-			// 		i = 0;
-			// 		this.src = mscs[i].file;
-			// 		titulo.innerText = mscs[i].title;
-			// 		autor.innerText = mscs[i].autor;
-			// 		$(thumb).css('background-image', 'url(' + mscs[i].thumb + ')');
-			// 		this.autoplay = true;
-			// }
-			}//https://cors-anywhere.herokuapp.com/
-		} catch (err) {
+		// 	// if (typeof mscs[i] != 'undefined') {
+		// 	// 		this.src = mscs[i].file;
+		// 	// 		$('#titulo').text(mscs[i].title);
+		// 	// 		$('#autor').text(mscs[i].autor);
+		// 	// 		$('.music-image').css('background-image', 'url(' + mscs[i].thumb + ')');
+		// 	// 		this.autoplay = true;
+		// 	// 		i++;
+		// 	// } else {
+		// 	// 		i = 0;
+		// 	// 		this.src = mscs[i].file;
+		// 	// 		titulo.innerText = mscs[i].title;
+		// 	// 		autor.innerText = mscs[i].autor;
+		// 	// 		$(thumb).css('background-image', 'url(' + mscs[i].thumb + ')');
+		// 	// 		this.autoplay = true;
+		// 	// }
+		// }//https://cors-anywhere.herokuapp.com/
+	} catch (err) {
+		console.log(err);
 	}
 
 	$('.song').click(function() {
 		socket.close();
-		socket.removeAllListeners();
 		socket.open();
 		document.getElementById('player').src = '/player/audio?id=' + this.id;
 	});

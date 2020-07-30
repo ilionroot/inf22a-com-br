@@ -18,7 +18,7 @@ module.exports = (server) => {
 	router.use(bodyParser.urlencoded({ extended: true }));
 	router.use(bodyParser.json());
 
-    router.use(express.static(path.join(__dirname, 'ppublic')));
+	router.use(express.static(path.join(__dirname, 'ppublic')));
 
 	let mscs;
 
